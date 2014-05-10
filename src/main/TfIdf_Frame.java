@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package advJavaAssignment;
+package main;
 
 import javax.swing.JOptionPane;
 
@@ -62,7 +62,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TF-IDF Java Program");
         setBackground(new java.awt.Color(254, 254, 254));
-        setPreferredSize(new java.awt.Dimension(600, 500));
 
         fullPanel.setBackground(new java.awt.Color(254, 254, 254));
 
