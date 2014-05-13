@@ -6,6 +6,8 @@
 
 package main;
 
+import java.awt.Toolkit;
+
 /**
  *
  * @author crimson
@@ -28,7 +30,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        dirChooserDialog = new javax.swing.JDialog();
         dirChooser = new javax.swing.JFileChooser();
         fullPanel = new javax.swing.JPanel();
         MenuBar = new javax.swing.JMenuBar();
@@ -37,25 +38,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         authorMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
 
-        dirChooserDialog.setTitle("Choose Default Directory");
-        dirChooserDialog.setBackground(java.awt.Color.white);
-
-        dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
-
-        javax.swing.GroupLayout dirChooserDialogLayout = new javax.swing.GroupLayout(dirChooserDialog.getContentPane());
-        dirChooserDialog.getContentPane().setLayout(dirChooserDialogLayout);
-        dirChooserDialogLayout.setHorizontalGroup(
-            dirChooserDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 597, Short.MAX_VALUE)
-            .addGroup(dirChooserDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(dirChooser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE))
-        );
-        dirChooserDialogLayout.setVerticalGroup(
-            dirChooserDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 459, Short.MAX_VALUE)
-            .addGroup(dirChooserDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(dirChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE))
-        );
+        dirChooser.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TF-IDF Java Program");
@@ -129,7 +112,9 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_chooseDirMouseClicked
 
     private void chooseDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDirActionPerformed
-        // TODO add your handling code here:
+        dirChooser.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width) / 2 - getWidth() / 2, (Toolkit.getDefaultToolkit().getScreenSize().height) / 2 - getHeight() / 2);
+        int option = dirChooser.showDialog(TfIdf_Frame.this, null);
+        
     }//GEN-LAST:event_chooseDirActionPerformed
 
     private void directoryMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryMenuActionPerformed
@@ -172,7 +157,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JMenu authorMenu;
     private javax.swing.JMenuItem chooseDir;
     private javax.swing.JFileChooser dirChooser;
-    private javax.swing.JDialog dirChooserDialog;
     private javax.swing.JMenu directoryMenu;
     private javax.swing.JPanel fullPanel;
     private javax.swing.JMenu helpMenu;

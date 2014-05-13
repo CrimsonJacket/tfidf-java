@@ -1,5 +1,6 @@
 package main;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public class TfIdf {
@@ -14,7 +15,7 @@ public class TfIdf {
         return count/wordCount;
     }
     
-    public double calculateIDF(String termToCheck){
+    public double calculateIDF(String termToCheck,double tf){
         double numOfDocs = DocumentParser.docArray.size();
         double count = 0;
         for(Document docs : DocumentParser.docArray){

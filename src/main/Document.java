@@ -39,6 +39,7 @@ public class Document extends HashMap{
             String[] words = sb.toString().replaceAll("[[`~!@#$%^&*()_+-={}|\\:\";<>,.?\\/\\[\\]]&&[^\\\\s]]", " ").split("\\s+");//to get individual terms
             this.wordCount = words.length;
             initializeHashMap(words);
+            //
             DocumentParser.allWordsArray.add(words);
         }
     }
@@ -50,17 +51,7 @@ public class Document extends HashMap{
             System.out.println(entry.getKey() + "\t" + entry.getValue());
         }
     }
-    
-    public static void removeDuplicate(String wordToRemove, String[] cmpWords){
-        for (int i = 0; i < cmpWords.length; i++) {
-            System.out.println(cmpWords[i]);
-            System.out.println(wordToRemove);
-            if(cmpWords[i].equalsIgnoreCase(wordToRemove)){
-                cmpWords[i] = null;
-            }          
-        }
-    }
-   
+
     public void initializeHashMap(String[] words) {
         String[] cmpWords = words.clone();
         for (String word : words) {
@@ -71,7 +62,7 @@ public class Document extends HashMap{
                         count++;
                         cmpWords[i]=null;
                     }
-                }               
+                }     
                 wordMaps.put(word, count);                
             }
         }

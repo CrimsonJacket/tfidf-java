@@ -41,7 +41,7 @@ public class DocumentParser {
             docArray.add(doc);           
         }      
         System.out.println("[+] Loaded " + docArray.size() + " files");  
-        System.out.println("[+] Documents' HashMap Loaded");
+        System.out.println("[+] Documents Loaded");
     }
 
     public void getTerms() throws IOException {
@@ -52,22 +52,21 @@ public class DocumentParser {
         String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
         for (String t : terms) {
             if (!allTerms.contains(t)) {
+                
                 allTerms.add(t);
             }
         }
     }
 
     public void tfIdfCalculator() {
-
         System.out.println("Fetching Documents and Calculating tfIdf...");
         for(Document doc : docArray){
             double tf = 0;
             double idf = 0;
-            double tfidf = 0;
-            String fileName = doc.getFileName();
+            double tfidf = 0;;
             for(String term: allTerms){
                 tf = new TfIdf().calculateTF(doc.getWordMaps(), term, doc.getWordCount());
-                idf = new TfIdf().calculateIDF(term);
+                idf = new TfIdf().calculateIDF(term,tf);
                 tfidf += tf*idf;
             }
             indexMap.put(doc.getFileName(),tfidf);
@@ -81,11 +80,9 @@ public class DocumentParser {
             public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
                 return o1.getValue().compareTo(o2.getValue());
             }
-
         });
         Collections.reverse(entries);//descending order
-        Map<String,Double> sortedMap = new LinkedHashMap<>();
-      
+        Map<String,Double> sortedMap = new LinkedHashMap<>();     
         for(Map.Entry<String,Double> entry: entries){
             sortedMap.put(entry.getKey(), entry.getValue());
         } 
@@ -98,7 +95,7 @@ public class DocumentParser {
         for (Map.Entry<String, Double> entry: indexMap.entrySet()){
             System.out.println(entry.getKey() + "\t" + entry.getValue());
             count++;
-            if(count>9){
+            if(count>9){//prints only top 10;
                 break;
             }
         }
