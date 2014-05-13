@@ -25,7 +25,11 @@ public class TfIdf {
                 }
             }
         }
-        return Math.log10(numOfDocs/count);
+        if(BigDecimal.ZERO.equals(tf)){
+            return Math.log10(numOfDocs/(count+1));
+        }else{
+            return Math.log10(numOfDocs/count);
+        } 
     }
 
 }
