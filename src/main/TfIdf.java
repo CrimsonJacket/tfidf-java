@@ -1,6 +1,5 @@
 package main;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 public class TfIdf {
@@ -26,7 +25,7 @@ public class TfIdf {
                 }
             }
         }
-        if(BigDecimal.ZERO.equals(tf)){
+        if(tf==0.0){
             return Math.log10(numOfDocs/(count+1));
         }else{
             return Math.log10(numOfDocs/count);
