@@ -50,11 +50,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fullPanel.setLayout(fullPanelLayout);
         fullPanelLayout.setHorizontalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addGap(0, 827, Short.MAX_VALUE)
         );
         fullPanelLayout.setVerticalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 477, Short.MAX_VALUE)
+            .addGap(0, 518, Short.MAX_VALUE)
         );
 
         MenuBar.setFont(new java.awt.Font("DejaVu Sans Condensed", 0, 15)); // NOI18N
