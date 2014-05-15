@@ -8,6 +8,7 @@ package calculation;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -17,7 +18,7 @@ import java.util.HashMap;
 public class StopWord {
     HashMap hm;
     int wordCount;
-    public StopWord(HashMap hashMap, String CVSfilename,int wordCount) throws Exception{
+    public StopWord(HashMap hashMap, String CVSfilename,int wordCount) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(CVSfilename));
         String[] stopWords;
         String line;

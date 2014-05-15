@@ -1,6 +1,7 @@
 package document;
 
 
+import calculation.StopWord;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,13 +33,16 @@ public final class Document extends HashMap{
             StringBuilder sb = new StringBuilder();
             String s = null;
             while ((s = in.readLine()) != null) {
-                sb.append(s);
+                sb.append(s.toLowerCase());
                 sb.append(" ");
             }
             in.close();
             String[] words = sb.toString().replaceAll("[[`~!@#$%^&*()_+-={}|\\:\";<>,.?\\/\\[\\]]&&[^\\\\s]]", " ").split("\\s+");//to get individual terms
             this.wordCount = words.length;
             initHashMap(words);
+            StopWord sw = new StopWord(wordMaps, "StopWord.csv", wordCount);
+            wordMaps=sw.getHm();
+            wordCount=sw.getWordCount();
         }
     }
     
