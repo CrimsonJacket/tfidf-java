@@ -6,6 +6,7 @@
 
 package main;
 
+import java.awt.Dimension;
 import java.awt.Toolkit;
 
 /**
@@ -19,8 +20,17 @@ public class TfIdf_Frame extends javax.swing.JFrame {
      */
     public TfIdf_Frame() {
         initComponents();
+        centerAlign();
+        
     }
 
+    private void centerAlign() {
+        Dimension frame = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) (frame.width - this.getWidth()) / 2;
+        int y = (int) (frame.height - this.getHeight()) / 2;
+        setLocation(x, y);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,39 +41,102 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private void initComponents() {
 
         dirChooser = new javax.swing.JFileChooser();
+        fileChooser = new javax.swing.JFileChooser();
+        optionDialog = new javax.swing.JDialog();
+        optionPanel = new javax.swing.JPanel();
         fullPanel = new javax.swing.JPanel();
+        searchTextField = new javax.swing.JTextField();
+        calculateBtn = new javax.swing.JButton();
         MenuBar = new javax.swing.JMenuBar();
-        directoryMenu = new javax.swing.JMenu();
+        settingMenu = new javax.swing.JMenu();
         chooseDir = new javax.swing.JMenuItem();
+        chooseCSV = new javax.swing.JMenuItem();
+        chooseOptions = new javax.swing.JMenuItem();
         authorMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
 
+        dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
         dirChooser.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        fileChooser.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        optionDialog.setTitle("Settings - Options");
+        optionDialog.setBackground(java.awt.Color.white);
+        optionDialog.setResizable(false);
+
+        optionPanel.setBackground(java.awt.Color.white);
+        optionPanel.setForeground(java.awt.Color.white);
+
+        javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
+        optionPanel.setLayout(optionPanelLayout);
+        optionPanelLayout.setHorizontalGroup(
+            optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 511, Short.MAX_VALUE)
+        );
+        optionPanelLayout.setVerticalGroup(
+            optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 448, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout optionDialogLayout = new javax.swing.GroupLayout(optionDialog.getContentPane());
+        optionDialog.getContentPane().setLayout(optionDialogLayout);
+        optionDialogLayout.setHorizontalGroup(
+            optionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(optionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        optionDialogLayout.setVerticalGroup(
+            optionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(optionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TF-IDF Java Program");
         setBackground(new java.awt.Color(254, 254, 254));
+        setResizable(false);
 
         fullPanel.setBackground(new java.awt.Color(254, 254, 254));
+
+        searchTextField.setText("Search...");
+        searchTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                searchTextFieldFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                searchTextFieldFocusLost(evt);
+            }
+        });
+
+        calculateBtn.setBackground(new java.awt.Color(255, 255, 255));
+        calculateBtn.setText("Calculate");
 
         javax.swing.GroupLayout fullPanelLayout = new javax.swing.GroupLayout(fullPanel);
         fullPanel.setLayout(fullPanelLayout);
         fullPanelLayout.setHorizontalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 827, Short.MAX_VALUE)
+            .addGroup(fullPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 671, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(calculateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
         fullPanelLayout.setVerticalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 518, Short.MAX_VALUE)
+            .addGroup(fullPanelLayout.createSequentialGroup()
+                .addContainerGap(470, Short.MAX_VALUE)
+                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(calculateBtn))
+                .addGap(15, 15, 15))
         );
 
         MenuBar.setFont(new java.awt.Font("DejaVu Sans Condensed", 0, 15)); // NOI18N
 
-        directoryMenu.setText("Directory");
-        directoryMenu.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
-        directoryMenu.addActionListener(new java.awt.event.ActionListener() {
+        settingMenu.setText("Settings");
+        settingMenu.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        settingMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                directoryMenuActionPerformed(evt);
+                settingMenuActionPerformed(evt);
             }
         });
 
@@ -78,9 +151,35 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 chooseDirActionPerformed(evt);
             }
         });
-        directoryMenu.add(chooseDir);
+        settingMenu.add(chooseDir);
 
-        MenuBar.add(directoryMenu);
+        chooseCSV.setText("Choose CSV");
+        chooseCSV.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                chooseCSVMouseClicked(evt);
+            }
+        });
+        chooseCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseCSVActionPerformed(evt);
+            }
+        });
+        settingMenu.add(chooseCSV);
+
+        chooseOptions.setText("Choose Directory");
+        chooseOptions.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                chooseOptionsMouseClicked(evt);
+            }
+        });
+        chooseOptions.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseOptionsActionPerformed(evt);
+            }
+        });
+        settingMenu.add(chooseOptions);
+
+        MenuBar.add(settingMenu);
 
         authorMenu.setText("Authors");
         authorMenu.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
@@ -113,14 +212,44 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
     private void chooseDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseDirActionPerformed
         dirChooser.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width) / 2 - getWidth() / 2, (Toolkit.getDefaultToolkit().getScreenSize().height) / 2 - getHeight() / 2);
-        int option = dirChooser.showDialog(TfIdf_Frame.this, null);
-        
+        int option = dirChooser.showDialog(TfIdf_Frame.this, null);       
     }//GEN-LAST:event_chooseDirActionPerformed
 
-    private void directoryMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directoryMenuActionPerformed
+    private void settingMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingMenuActionPerformed
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_directoryMenuActionPerformed
+    }//GEN-LAST:event_settingMenuActionPerformed
+
+    private void chooseCSVMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chooseCSVMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chooseCSVMouseClicked
+
+    private void chooseCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseCSVActionPerformed
+        // TODO add your handling code here:
+        fileChooser.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width) / 2 - getWidth() / 2, (Toolkit.getDefaultToolkit().getScreenSize().height) / 2 - getHeight() / 2);
+        int option = fileChooser.showDialog(TfIdf_Frame.this, null);
+    }//GEN-LAST:event_chooseCSVActionPerformed
+
+    private void searchTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchTextFieldFocusGained
+        // TODO add your handling code here:
+        searchTextField.setText("");
+    }//GEN-LAST:event_searchTextFieldFocusGained
+
+    private void searchTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchTextFieldFocusLost
+        // TODO add your handling code here:
+        searchTextField.setText("Search...");
+    }//GEN-LAST:event_searchTextFieldFocusLost
+
+    private void chooseOptionsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chooseOptionsMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chooseOptionsMouseClicked
+
+    private void chooseOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseOptionsActionPerformed
+        // TODO add your handling code here:
+        optionDialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width) / 2 - getWidth() / 2, (Toolkit.getDefaultToolkit().getScreenSize().height) / 2 - getHeight() / 2);
+        optionDialog.pack();
+        optionDialog.setVisible(true);
+    }//GEN-LAST:event_chooseOptionsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -155,10 +284,17 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar MenuBar;
     private javax.swing.JMenu authorMenu;
+    private javax.swing.JButton calculateBtn;
+    private javax.swing.JMenuItem chooseCSV;
     private javax.swing.JMenuItem chooseDir;
+    private javax.swing.JMenuItem chooseOptions;
     private javax.swing.JFileChooser dirChooser;
-    private javax.swing.JMenu directoryMenu;
+    private javax.swing.JFileChooser fileChooser;
     private javax.swing.JPanel fullPanel;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JDialog optionDialog;
+    private javax.swing.JPanel optionPanel;
+    private javax.swing.JTextField searchTextField;
+    private javax.swing.JMenu settingMenu;
     // End of variables declaration//GEN-END:variables
 }

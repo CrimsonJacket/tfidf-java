@@ -1,4 +1,4 @@
-package main;
+package document;
 
 
 
@@ -16,15 +16,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
- // @author crimson
+import calculation.TfIdf;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author Daniel
+ */
 public class DocumentParser {
 
     public static List<Document> docArray = null;
-    public static List<String[]> allWordsArray = new ArrayList<>(); //store all words
     private List<String> allTerms = new ArrayList<>(); //store all terms
-    public Map<String, String[]> docMaps = new HashMap<>();
-    private Map<String, Double> indexMap = new HashMap<>();
+    private HashMap<String, Double> indexMap = new HashMap<>();
 
     public void printDocs() {
         for (Document entry : docArray) {
@@ -82,7 +88,7 @@ public class DocumentParser {
             }
         });
         Collections.reverse(entries);//descending order
-        Map<String,Double> sortedMap = new LinkedHashMap<>();     
+        HashMap<String,Double> sortedMap = new LinkedHashMap<>();     
         for(Map.Entry<String,Double> entry: entries){
             sortedMap.put(entry.getKey(), entry.getValue());
         } 
@@ -95,7 +101,7 @@ public class DocumentParser {
         for (Map.Entry<String, Double> entry: indexMap.entrySet()){
             System.out.println(entry.getKey() + "\t" + entry.getValue());
             count++;
-            if(count>9){//prints only top 10;
+            if(count>9){
                 break;
             }
         }

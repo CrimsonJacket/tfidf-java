@@ -1,4 +1,4 @@
-package main;
+package document;
 
 
 import java.io.BufferedReader;
@@ -16,12 +16,12 @@ import java.util.Map;
  */
 /**
  *
- * @author crimson
+ * @author Daniel
  */
-public class Document extends HashMap{
+public final class Document extends HashMap{
 
     private String fileName;
-    private Map<String, Integer> wordMaps = new HashMap<>();
+    private HashMap<String, Integer> wordMaps = new HashMap<>();
     private int wordCount;
 
     public Document(File f) throws FileNotFoundException, IOException {
@@ -38,9 +38,7 @@ public class Document extends HashMap{
             in.close();
             String[] words = sb.toString().replaceAll("[[`~!@#$%^&*()_+-={}|\\:\";<>,.?\\/\\[\\]]&&[^\\\\s]]", " ").split("\\s+");//to get individual terms
             this.wordCount = words.length;
-            initializeHashMap(words);
-            //
-            DocumentParser.allWordsArray.add(words);
+            initHashMap(words);
         }
     }
     
@@ -52,7 +50,7 @@ public class Document extends HashMap{
         }
     }
 
-    public void initializeHashMap(String[] words) {
+    public void initHashMap(String[] words) {
         String[] cmpWords = words.clone();
         for (String word : words) {
             int count = 0;
@@ -76,7 +74,7 @@ public class Document extends HashMap{
         return wordCount;
     }
 
-    public Map<String, Integer> getWordMaps() {
+    public HashMap<String, Integer> getWordMaps() {
         return wordMaps;
     }
 
