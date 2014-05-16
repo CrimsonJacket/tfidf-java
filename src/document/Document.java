@@ -1,13 +1,17 @@
 package document;
 
-
 import calculation.StopWord;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -19,9 +23,10 @@ import java.util.Map;
  *
  * @author Daniel
  */
-public class Document{
+public class Document {
 
     private String fileName;
+    public HashMap<String, Double> cosineMaps = new HashMap<>();
     private HashMap<String, Integer> wordMaps = new HashMap<>();
     private int wordCount;
 
@@ -42,10 +47,19 @@ public class Document{
             initHashMap(words);
         }
     }
-    
-    public void printWordMaps(){
+
+    public void printCosineMaps() {
+        for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
+            if(entry.getValue()!=0.000000){
+                System.out.printf("%46s%-30s %15.6f %n", "",entry.getKey(), entry.getValue());
+            }           
+        }
+
+    }
+
+    public void printWordMaps() {
         System.out.println(fileName + ": " + wordCount);
-        for(Map.Entry<String, Integer> entry : wordMaps.entrySet()){
+        for (Map.Entry<String, Integer> entry : wordMaps.entrySet()) {
             System.out.print("\t");
             System.out.println(entry.getKey() + "\t" + entry.getValue());
         }
@@ -59,14 +73,36 @@ public class Document{
                 for (int i = 0; i < cmpWords.length; i++) {
                     if (word.equalsIgnoreCase(cmpWords[i])) {
                         count++;
-                        cmpWords[i]=null;
+                        cmpWords[i] = null;
                     }
-                }     
-                wordMaps.put(word, count);                
+                }
+                wordMaps.put(word, count);
             }
         }
     }
- 
+
+    public void sortCosineMap() {
+        List<Map.Entry<String, Double>> entries = new LinkedList<>(cosineMaps.entrySet());
+
+        Collections.sort(entries, new Comparator<Map.Entry<String, Double>>() {
+            @Override
+            public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        });
+        Collections.reverse(entries);//descending order
+        HashMap<String, Double> sortedMap = new LinkedHashMap<>();
+        int count = 0;
+        for (Map.Entry<String, Double> entry : entries) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+            count++;
+            if (count > 2) {
+                break;
+            }
+        }
+        cosineMaps = sortedMap;
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -79,4 +115,7 @@ public class Document{
         return wordMaps;
     }
 
+    public void setCosineMaps(HashMap<String, Double> cosineMaps) {
+        this.cosineMaps = cosineMaps;
+    }
 }

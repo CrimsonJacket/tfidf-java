@@ -6,7 +6,6 @@
 
 package calculation;
 
-import document.Document;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,8 +25,11 @@ public class StopWord {
     public int wordCount;
     public String[] stopWords;
     
-    public StopWord(String cvsFilename) throws FileNotFoundException, IOException{
-        this.fileName=cvsFilename;
+    public StopWord(String cvsFilename){
+        this.fileName=cvsFilename;       
+    }
+    
+    public void initStopWords() throws FileNotFoundException, IOException{
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         StringBuilder sb = new StringBuilder();

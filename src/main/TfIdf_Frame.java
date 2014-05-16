@@ -8,6 +8,7 @@ package main;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,7 +22,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     public TfIdf_Frame() {
         initComponents();
         centerAlign();
-        
     }
 
     private void centerAlign() {
@@ -47,6 +47,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fullPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
         calculateBtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         MenuBar = new javax.swing.JMenuBar();
         settingMenu = new javax.swing.JMenu();
         chooseDir = new javax.swing.JMenuItem();
@@ -97,6 +99,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fullPanel.setBackground(new java.awt.Color(254, 254, 254));
 
         searchTextField.setText("Search...");
+        searchTextField.setEnabled(false);
         searchTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 searchTextFieldFocusGained(evt);
@@ -108,6 +111,15 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         calculateBtn.setBackground(new java.awt.Color(255, 255, 255));
         calculateBtn.setText("Calculate");
+        calculateBtn.setEnabled(false);
+
+        jTextArea1.setBackground(new java.awt.Color(254, 254, 254));
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jTextArea1.setFocusable(false);
+        jTextArea1.setHighlighter(null);
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout fullPanelLayout = new javax.swing.GroupLayout(fullPanel);
         fullPanel.setLayout(fullPanelLayout);
@@ -119,11 +131,13 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(calculateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(15, 15, 15))
+            .addComponent(jScrollPane1)
         );
         fullPanelLayout.setVerticalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fullPanelLayout.createSequentialGroup()
-                .addContainerGap(470, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(calculateBtn))
@@ -277,6 +291,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new TfIdf_Frame().setVisible(true);
+                JOptionPane.showMessageDialog(null, "Please set Application Settings before proceeding");
             }
         });
     }
@@ -292,6 +307,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JPanel fullPanel;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JDialog optionDialog;
     private javax.swing.JPanel optionPanel;
     private javax.swing.JTextField searchTextField;

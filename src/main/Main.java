@@ -18,13 +18,13 @@ public class Main {
     public static void main(String args[]) throws FileNotFoundException, IOException {
         DocumentParser dp = new DocumentParser();
         StopWord stopWord = new StopWord("StopWord.csv");
-        // parseFiles Function may require StopWord.csv Parameter
-        dp.parseFiles("dataFiles.original");
-        
-        dp.printDocs();
-        //dp.getTerms();
-        //dp.tfIdfCalculator();
-        //dp.sortIndex();
-        //dp.printIndex();
+        stopWord.initStopWords();
+        dp.parseFiles("dataFiles.original");    
+        //dp.printDocs();
+        dp.getTerms();
+        dp.tfIdfCalculator();
+        dp.cosineSimilarityCalculator();
+        dp.sortIndex();
+        dp.printIndex();
     }
 }

@@ -2,6 +2,7 @@ package calculation;
 
 import document.Document;
 import document.DocumentParser;
+import java.util.HashMap;
 import java.util.Map;
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -12,9 +13,9 @@ import java.util.Map;
  *
  * @author Daniel
  */
-public class TfIdf {
+public class TfIdfCalculator {
 
-    public double calculateTF(Map<String, Integer> map, String termsToCheck, int wordCount) {
+    public double calculateTF(HashMap<String, Integer> map, String termsToCheck, int wordCount) {
         double count = 0;
         for(Map.Entry<String,Integer> entry: map.entrySet()){
             if(entry.getKey().equalsIgnoreCase(termsToCheck)){
