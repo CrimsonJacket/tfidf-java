@@ -1,5 +1,6 @@
 package main;
 
+import calculation.StopWord;
 import document.DocumentParser;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,7 +17,10 @@ public class Main {
 
     public static void main(String args[]) throws FileNotFoundException, IOException {
         DocumentParser dp = new DocumentParser();
-        dp.parseFiles("dataFiles");
+        StopWord stopWord = new StopWord("StopWord.csv");
+        // parseFiles Function may require StopWord.csv Parameter
+        dp.parseFiles("dataFiles.original");
+        
         dp.printDocs();
         //dp.getTerms();
         //dp.tfIdfCalculator();

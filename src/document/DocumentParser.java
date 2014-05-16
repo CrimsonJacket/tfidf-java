@@ -41,7 +41,7 @@ public class DocumentParser {
     public void parseFiles(String filePath) throws FileNotFoundException, IOException {
         File[] allfiles = new File(filePath).listFiles();
         docArray = new ArrayList<>(allfiles.length);
-        System.out.println("Initializing HashMap");
+        System.out.println("Initializing HashMaps");
         for (File f : allfiles) {
             Document doc = new Document(f);
             docArray.add(doc);           
@@ -57,8 +57,7 @@ public class DocumentParser {
         String userInput = br.readLine();
         String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
         for (String t : terms) {
-            if (!allTerms.contains(t)) {
-                
+            if (!allTerms.contains(t)) {                
                 allTerms.add(t);
             }
         }

@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @author Daniel
  */
-public final class Document extends HashMap{
+public class Document{
 
     private String fileName;
     private HashMap<String, Integer> wordMaps = new HashMap<>();
@@ -40,9 +40,6 @@ public final class Document extends HashMap{
             String[] words = sb.toString().replaceAll("[[`~!@#$%^&*()_+-={}|\\:\";<>,.?\\/\\[\\]]&&[^\\\\s]]", " ").split("\\s+");//to get individual terms
             this.wordCount = words.length;
             initHashMap(words);
-            StopWord sw = new StopWord(wordMaps, "StopWord.csv", wordCount);
-            wordMaps=sw.getHm();
-            wordCount=sw.getWordCount();
         }
     }
     
@@ -54,11 +51,11 @@ public final class Document extends HashMap{
         }
     }
 
-    public void initHashMap(String[] words) {
+    private void initHashMap(String[] words) {
         String[] cmpWords = words.clone();
         for (String word : words) {
             int count = 0;
-            if (!wordMaps.containsKey(word)) {
+            if (!wordMaps.containsKey(word) && !StopWord.hs.contains(word)) {
                 for (int i = 0; i < cmpWords.length; i++) {
                     if (word.equalsIgnoreCase(cmpWords[i])) {
                         count++;

@@ -6,43 +6,44 @@
 
 package calculation;
 
+import document.Document;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
  * @author Zheng Wei
  */
 public class StopWord {
-    HashMap hm;
-    int wordCount;
-    public StopWord(HashMap hashMap, String CVSfilename,int wordCount) throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader(CVSfilename));
-        String[] stopWords;
+    
+    private String fileName;
+    public static HashSet hs = new HashSet();
+    public HashMap<String, Integer> hm;
+    public int wordCount;
+    public String[] stopWords;
+    
+    public StopWord(String cvsFilename) throws FileNotFoundException, IOException{
+        this.fileName=cvsFilename;
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         StringBuilder sb = new StringBuilder();
-        this.wordCount = wordCount;
         while((line = br.readLine())!= null){
             sb.append(line);
         }
-        stopWords = sb.toString().split(",");
-        hm = hashMap;
-        for (String s : stopWords){
-            if(hm.containsKey(s)){
-               // System.out.println("Line found! "+s);
-               // System.out.println(hm.get(s));
-                this.wordCount -= (int)hm.get(s);
-                hm.remove(s);
-            }
+        this.stopWords = sb.toString().split(",");
+        for(String s:stopWords){
+            hs.add(s);
         }
     }
 
     /**
      * @return the hm
      */
-    public HashMap getHm() {
+    public HashMap<String, Integer> getHm() {
         return hm;
     }
 
