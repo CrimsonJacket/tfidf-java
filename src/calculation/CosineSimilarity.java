@@ -7,7 +7,7 @@ package calculation;
 
 /**
  *
- * @author crimson
+ * @author Daniel
  */
 public class CosineSimilarity {
 
@@ -15,7 +15,6 @@ public class CosineSimilarity {
         double dotProduct = 0.0;
         double magnitude1 = 0.0;
         double magnitude2 = 0.0;
-        double cosineSimilarity;
 
         for (int i = 0; i < tfidfVector1.length; i++) {
             dotProduct += (tfidfVector1[i] * tfidfVector2[i]);
@@ -27,7 +26,7 @@ public class CosineSimilarity {
         magnitude2 = Math.sqrt(magnitude2);
 
         if (magnitude1 != 0.0 && magnitude2 != 0.0) {
-            return cosineSimilarity = dotProduct / (magnitude1 * magnitude2);
+            return dotProduct / (magnitude1 * magnitude2);
         } else {
             return 0.0;
         }        

@@ -19,7 +19,7 @@ import java.util.HashSet;
  */
 public class StopWord {
     
-    private String fileName;
+    public static String fileName;
     public static HashSet hs = new HashSet();
     public HashMap<String, Integer> hm;
     public int wordCount;

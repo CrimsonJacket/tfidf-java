@@ -42,18 +42,21 @@ public class Document {
                 sb.append(" ");
             }
             in.close();
-            String[] words = sb.toString().replaceAll("[[`~!@#$%^&*()_+-={}|\\:\";<>,.?\\/\\[\\]]&&[^\\\\s]]", " ").split("\\s+");//to get individual terms
+            String[] words = sb.toString().replaceAll("[\\W&&[^\\s]]\\w*", " ").split("\\s+");//to get individual terms
             this.wordCount = words.length;
             initHashMap(words);
         }
     }
 
-    public void printCosineMaps() {
+    public String getCosineMaps() {
+        StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
             if(entry.getValue()!=0.000000 && !DocumentParser.tfidfMap.containsKey(entry.getKey())){
-                System.out.printf("%46s%-30s %15.6f %n", "",entry.getKey(), entry.getValue());
+                sb.append(String.format("%40s %-30s %10.6f %n", " ",entry.getKey(), entry.getValue()));
+                //System.out.printf("%46s%-30s %15.6f %n", "",entry.getKey(), entry.getValue());
             }           
         }
+        return sb.toString();
     }
 
     public void printWordMaps() {
@@ -68,7 +71,18 @@ public class Document {
         String[] cmpWords = words.clone();
         for (String word : words) {
             int count = 0;
-            if (!wordMaps.containsKey(word) && !StopWord.hs.contains(word)) {
+            if (DocumentParser.enableStopWord) {
+                if (!wordMaps.containsKey(word) && !StopWord.hs.contains(word)) {
+                    for (int i = 0; i < cmpWords.length; i++) {
+                        if (word.equalsIgnoreCase(cmpWords[i])) {
+                            count++;
+                            cmpWords[i] = null;
+                        }
+                    }
+                    wordMaps.put(word, count);
+                }
+            }
+            else if (!wordMaps.containsKey(word)) {
                 for (int i = 0; i < cmpWords.length; i++) {
                     if (word.equalsIgnoreCase(cmpWords[i])) {
                         count++;
