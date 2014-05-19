@@ -32,7 +32,7 @@ public class DocumentParser {
     public static List<Document> docArray = null;
     private List<String> allTerms = new ArrayList<>(); //store all terms
     public HashMap<String, Double[]> tfidfVectorMap=  new HashMap<>();
-    public HashMap<String, Double> tfidfMap = new HashMap<>();
+    public static HashMap<String, Double> tfidfMap = new HashMap<>();
 
     public void parseFiles(String filePath) throws FileNotFoundException, IOException {
         File[] allfiles = new File(filePath).listFiles();
@@ -147,13 +147,16 @@ public class DocumentParser {
         String column4 = "Cosine Similarity Value";
         System.out.printf("%-30s %-10s %15s %40s %n", column1, column2, column3, column4);
         System.out.println(initDivider());
-        for (Map.Entry<String, Double> entry: tfidfMap.entrySet()){           
-            System.out.printf("%-30s %10.6f %n",entry.getKey(),entry.getValue());            
-            for(Document doc: docArray){
-                if(entry.getKey().equalsIgnoreCase(doc.getFileName())){
-                    doc.printCosineMaps();
-                }
+        for (Map.Entry<String, Double> entry: tfidfMap.entrySet()){
+            if(entry.getValue()!=0.000000){
+               System.out.printf("%-30s %10.6f %n",entry.getKey(),entry.getValue());            
+                for(Document doc: docArray){
+                    if(entry.getKey().equalsIgnoreCase(doc.getFileName())){
+                        doc.printCosineMaps();
+                    }
+                } 
             }
+            
         }
     }
     

@@ -50,11 +50,10 @@ public class Document {
 
     public void printCosineMaps() {
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
-            if(entry.getValue()!=0.000000){
+            if(entry.getValue()!=0.000000 && !DocumentParser.tfidfMap.containsKey(entry.getKey())){
                 System.out.printf("%46s%-30s %15.6f %n", "",entry.getKey(), entry.getValue());
             }           
         }
-
     }
 
     public void printWordMaps() {
