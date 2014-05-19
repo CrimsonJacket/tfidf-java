@@ -1,4 +1,4 @@
 tfidf-java
 ==========
 
-Adv Java Programming Assignment
+Term Frequency - Inverse Document Frequency in Java
