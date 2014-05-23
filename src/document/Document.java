@@ -1,6 +1,7 @@
 package document;
 
 import calculation.StopWord;
+import calculation.WordStemming;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +34,7 @@ public class Document {
     public Document(File f) throws FileNotFoundException, IOException {
         this.fileName = f.getName();
         BufferedReader in = null;
-        if (f.getName().endsWith(".txt")) {
+        if (f.getName().endsWith(".txt")) {           
             in = new BufferedReader(new FileReader(f));
             StringBuilder sb = new StringBuilder();
             String s = null;
@@ -43,7 +44,14 @@ public class Document {
             }
             in.close();
             String[] words = sb.toString().replaceAll("[\\W&&[^\\s]]\\w*", " ").split("\\s+");//to get individual terms
-            this.wordCount = words.length;
+            String[] tmpWords = new String[words.length];
+            if (DocumentParser.enableWordStem) {
+                for (int i = 0; i < tmpWords.length; i++) {
+                    tmpWords[i] = words[i].replace(words[i], WordStemming.implementStem(words[i]));
+                }
+                words = tmpWords;
+            }           
+            this.wordCount = words.length;           
             initHashMap(words);
         }
     }
@@ -52,8 +60,7 @@ public class Document {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
             if(entry.getValue()!=0.000000 && !DocumentParser.tfidfMap.containsKey(entry.getKey())){
-                sb.append(String.format("%40s %-30s %10.6f %n", " ",entry.getKey(), entry.getValue()));
-                //System.out.printf("%46s%-30s %15.6f %n", "",entry.getKey(), entry.getValue());
+                sb.append(String.format("%40s %-30s %10.6f %n", " ",entry.getKey(), entry.getValue()));            
             }           
         }
         return sb.toString();

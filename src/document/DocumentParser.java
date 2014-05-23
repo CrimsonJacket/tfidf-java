@@ -3,6 +3,7 @@ package document;
 import calculation.CosineSimilarity;
 import calculation.StopWord;
 import calculation.TfIdfCalculator;
+import calculation.WordStemming;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +36,8 @@ public class DocumentParser {
     public static List<Document> docArray = null;
     public List<String> allTerms = new ArrayList<>(); //store all terms
     public HashMap<String, Double[]> tfidfVectorMap = new HashMap<>();
-    public static HashMap<String, Double> tfidfMap = new HashMap<>();
+    public static HashMap<String, Double> tfidfMap = null;
+    public static String filePath;
     public static boolean enableCosine = true;
     public static boolean enableStopWord = true;
     public static boolean enableWordStem = true;
@@ -45,11 +47,20 @@ public class DocumentParser {
 
     }
 
-    public DocumentParser(boolean cosine, boolean stopword, boolean wordstem, boolean wordexp) {
+    public DocumentParser(boolean cosine, boolean stopword, boolean wordstem, boolean wordexp, String filePath) {
         DocumentParser.enableCosine = cosine;
         DocumentParser.enableStopWord = stopword;
         DocumentParser.enableWordStem = wordstem;
-        DocumentParser.enableWordExpansion = wordexp;       
+        DocumentParser.enableWordExpansion = wordexp;  
+        DocumentParser.filePath = filePath;
+        TfIdf_Frame.setSettingsMessage("Folder Path: " + DocumentParser.filePath);
+        TfIdf_Frame.appendSettingsMessage("StopWord Path: " + StopWord.fileName);
+        TfIdf_Frame.appendSettingsMessage("");
+        TfIdf_Frame.appendSettingsMessage("Cosine Similarity: " + enableCosine);
+        TfIdf_Frame.appendSettingsMessage("Stop Word: " + enableStopWord);
+        TfIdf_Frame.appendSettingsMessage("Word Stemming: " + enableWordStem);
+        TfIdf_Frame.appendSettingsMessage("Search Expansion: " + enableWordExpansion);
+        DocumentParser.tfidfMap = new HashMap<>();
     }
 
     public void clearMaps() {
@@ -57,18 +68,11 @@ public class DocumentParser {
         tfidfMap.clear();
     }
 
-    public void parseFiles(String filePath) throws FileNotFoundException, IOException {
+    public void parseFiles() throws FileNotFoundException, IOException {
         File[] allfiles = new File(filePath).listFiles();
         docArray = new ArrayList<>(allfiles.length);
-
         
-        TfIdf_Frame.setSettingsMessage("Folder Path: " + filePath);
-        TfIdf_Frame.setSettingsMessage("StopWord Path: " + StopWord.fileName);
-        TfIdf_Frame.setSettingsMessage("");
-        TfIdf_Frame.setSettingsMessage("Cosine Similarity: " + enableCosine);
-        TfIdf_Frame.setSettingsMessage("Stop Word: " + enableStopWord);
-        TfIdf_Frame.setSettingsMessage("Word Stemming: " + enableWordStem);
-        TfIdf_Frame.setSettingsMessage("Search Expansion: " + enableWordExpansion);
+        
         TfIdf_Frame.appendMessage("Initializing HashMaps");
         for (File f : allfiles) {
             Document doc = new Document(f);
@@ -88,21 +92,6 @@ public class DocumentParser {
         }
     }
 
-    public void getTerms() throws IOException {
-        allTerms = new ArrayList<>(); //
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("Enter Search Term(s): ");
-        String userInput = br.readLine();
-        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
-        for (String t : terms) {
-
-            if (!allTerms.contains(t)) {
-                allTerms.add(t);
-            }
-        }
-
-    }
-
     public void tfIdfCalculator() {
         for (Document doc : docArray) {
             double tf = 0.0;
@@ -110,9 +99,12 @@ public class DocumentParser {
             Double[] tfidfVectors = new Double[allTerms.size()];
             int count = 0;
             for (String term : allTerms) {
+                if(enableWordStem){
+                    term = WordStemming.implementStem(term);
+                }
                 tf = new TfIdfCalculator().calculateTF(doc.getWordMaps(), term, doc.getWordCount());
                 idf = new TfIdfCalculator().calculateIDF(term, tf);
-                tfidfVectors[count] = tf * idf; //tf-idf value for 1 term only
+                tfidfVectors[count] = tf * idf;
                 count++;
             }
             tfidfVectorMap.put(doc.getFileName(), tfidfVectors);// Vectors are needed for Cosine Similarity Calculation
@@ -213,6 +205,26 @@ public class DocumentParser {
 
         }
         TfIdf_Frame.appendMessage(finalBuilder.toString());
+    }
+
+    public static void setFilePath(String filePath) {
+        DocumentParser.filePath = filePath;
+    }
+
+    public static void setEnableCosine(boolean enableCosine) {
+        DocumentParser.enableCosine = enableCosine;
+    }
+
+    public static void setEnableStopWord(boolean enableStopWord) {
+        DocumentParser.enableStopWord = enableStopWord;
+    }
+
+    public static void setEnableWordStem(boolean enableWordStem) {
+        DocumentParser.enableWordStem = enableWordStem;
+    }
+
+    public static void setEnableWordExpansion(boolean enableWordExpansion) {
+        DocumentParser.enableWordExpansion = enableWordExpansion;
     }
 
     public void printDocs() {

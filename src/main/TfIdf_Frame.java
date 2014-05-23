@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
  */
 public class TfIdf_Frame extends javax.swing.JFrame {
 
-    private DocumentParser dp;
+    private DocumentParser dp = null;
     private StopWord sw;
 
     /**
@@ -40,6 +40,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     }
 
     public static void setSettingsMessage(String msg){
+        settingTextArea.setText(msg+"\n");
+        settingTextArea.update(settingTextArea.getGraphics());
+    }
+    
+    public static void appendSettingsMessage(String msg){
         settingTextArea.append(msg+"\n");
         settingTextArea.update(settingTextArea.getGraphics());
     }
@@ -140,6 +145,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         cancelSettingButton.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
         cancelSettingButton.setText("Cancel");
+        cancelSettingButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cancelSettingButtonMouseClicked(evt);
+            }
+        });
 
         additionalFeaturesLabel.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
         additionalFeaturesLabel.setText("Additional Features");
@@ -173,13 +183,13 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         settingsPanelLayout.setHorizontalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
-                .addContainerGap(115, Short.MAX_VALUE)
+                .addContainerGap(139, Short.MAX_VALUE)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
                         .addComponent(okSettingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(21, 21, 21)
+                        .addGap(30, 30, 30)
                         .addComponent(cancelSettingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(167, 167, 167))
+                        .addGap(192, 192, 192))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
                         .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(stopWordCheckBox)
@@ -247,10 +257,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         settingsDialog.getContentPane().setLayout(settingsDialogLayout);
         settingsDialogLayout.setHorizontalGroup(
             settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(settingsDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(settingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         settingsDialogLayout.setVerticalGroup(
             settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -340,6 +347,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         topList.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         topList.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         topList.setAutoscrolls(false);
+        topList.setEnabled(false);
+        topList.setFocusable(false);
         topList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 topListMouseClicked(evt);
@@ -364,11 +373,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fullPanelLayout.setHorizontalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fullPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(textAreaScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
+                .addGap(18, 18, 18)
+                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(textAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                    .addComponent(searchTextField))
+                .addGap(18, 18, 18)
                 .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fullPanelLayout.createSequentialGroup()
                         .addComponent(calculateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -492,17 +501,33 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
-                dp = new DocumentParser(cosineCheckBox.isSelected(), stopWordCheckBox.isSelected(), wordStemCheckBox.isSelected(), searchTermCheckBox.isSelected());
-                try {
-                    sw = new StopWord(stopWordPathText.getText());
-                    sw.initStopWords();
+                if(dp!=null && DocumentParser.filePath.equalsIgnoreCase(folderPathText.getText()) && StopWord.fileName.equalsIgnoreCase(stopWordPathText.getText())){
+                    DocumentParser.setEnableCosine(cosineCheckBox.isSelected());
+                    DocumentParser.setEnableStopWord(stopWordCheckBox.isSelected());
+                    DocumentParser.setEnableWordStem(wordStemCheckBox.isSelected());
+                    DocumentParser.setEnableWordExpansion(searchTermCheckBox.isSelected());
                     settingsDialog.dispose();
-                    dp.parseFiles(folderPathText.getText());
-                    searchTextField.setEnabled(true);
-                    calculateBtn.setEnabled(true);
-                } catch (IOException ex) {
-                    appendMessage("Error occured while opening/reading folder/file.\n"
-                            + "Please check settings and files.");
+                    setSettingsMessage("Folder Path: " + DocumentParser.filePath);
+                    appendSettingsMessage("StopWord Path: " + StopWord.fileName);
+                    appendSettingsMessage("");
+                    appendSettingsMessage("Cosine Similarity: " + cosineCheckBox.isSelected());
+                    appendSettingsMessage("Stop Word: " + stopWordCheckBox.isSelected());
+                    appendSettingsMessage("Word Stemming: " + wordStemCheckBox.isSelected());
+                    appendSettingsMessage("Search Expansion: " + searchTermCheckBox.isSelected());
+                } else {
+                    try {
+                        sw = new StopWord(stopWordPathText.getText());
+                        sw.initStopWords();
+                        dp = new DocumentParser(cosineCheckBox.isSelected(), stopWordCheckBox.isSelected(), wordStemCheckBox.isSelected(), searchTermCheckBox.isSelected(), folderPathText.getText());
+                        settingsDialog.dispose();
+                        dp.parseFiles();
+                        dp.printDocs();
+                        searchTextField.setEnabled(true);
+                        calculateBtn.setEnabled(true);
+                    } catch (IOException ex) {
+                        appendMessage("Error occured while opening/reading folder/file.\n"
+                                + "Please check settings and files.");
+                    }
                 }
             }
 
@@ -534,7 +559,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_chooseStopWordButtonMouseClicked
 
     private void calculateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calculateBtnMouseClicked
-        if (!searchTextField.getText().trim().equals("")) {
+        if (!searchTextField.getText().trim().equals("")&&!searchTextField.getText().equalsIgnoreCase("[ Enter Search Term(s) ]")) {
             try {
                 topList.removeAll();
                 dp.setTerms(searchTextField.getText());
@@ -548,6 +573,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 appendMessage("[+] Sorted Index");
                 dp.printIndex();
                 topList.setModel(dp.populateJList());
+                topList.setEnabled(true);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Invalid User Input. "
                     + "Please type search term(s) again.", 
@@ -564,8 +590,28 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
     private void topListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_topListMouseClicked
         // TODO add your handling code here:
-        String option = topList.getSelectedValue().toString();
+        if(DocumentParser.tfidfMap!=null){
+            String selected = topList.getSelectedValue().toString();
+        }       
     }//GEN-LAST:event_topListMouseClicked
+
+    private void cancelSettingButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelSettingButtonMouseClicked
+        // TODO add your handling code here:
+        int option = JOptionPane.showConfirmDialog(
+                null, "You are exiting Application Settings.\n"
+                + "All changes made will be deleted.\nAre You sure?",
+                "Exiting Server Settings", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        if (option == JOptionPane.YES_OPTION) {
+            folderPathText.setText(DocumentParser.filePath);
+            stopWordPathText.setText(StopWord.fileName);
+            cosineCheckBox.setEnabled(DocumentParser.enableCosine);
+            stopWordCheckBox.setEnabled(DocumentParser.enableStopWord);
+            wordStemCheckBox.setEnabled(DocumentParser.enableWordStem);
+            searchTermCheckBox.setEnabled(DocumentParser.enableWordExpansion);
+            settingsDialog.dispose();
+        }
+    }//GEN-LAST:event_cancelSettingButtonMouseClicked
 
     /**
      * @param args the command line arguments
