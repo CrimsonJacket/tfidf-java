@@ -27,10 +27,10 @@ public class TfIdfCalculator {
     }
     
     public double calculateIDF(String termToCheck,double tf){
-        double numOfDocs = DocumentParser.docArray.size();
+        double numOfDocs = DocumentParser.docSet.size();
         double count = 0;
-        for(Document docs : DocumentParser.docArray){
-            for(Map.Entry<String,Integer> entry : docs.getWordMaps().entrySet()){
+        for(Map.Entry<String, Document> docs : DocumentParser.docSet.entrySet()){
+            for(Map.Entry<String,Integer> entry : docs.getValue().getWordMaps().entrySet()){
                 if(entry.getKey().equalsIgnoreCase(termToCheck)){
                     count++;
                     break;
