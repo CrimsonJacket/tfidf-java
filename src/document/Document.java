@@ -35,7 +35,7 @@ public class Document {
     public Document(File f) throws FileNotFoundException, IOException {
         this.fileName = f.getName();
         BufferedReader in = null;
-        if (f.getName().endsWith(".txt")) {           
+        if (f.getName().endsWith(".txt")) {
             in = new BufferedReader(new FileReader(f));
             StringBuilder sb = new StringBuilder();
             String s = null;
@@ -51,30 +51,79 @@ public class Document {
                     tmpWords[i] = words[i].replace(words[i], WordStemming.implementStem(words[i]));
                 }
                 words = tmpWords;
-            }           
-            this.wordCount = words.length;           
+            }
+            this.wordCount = words.length;
             initHashMap(words);
         }
     }
 
     public String getCosineMaps() {
         StringBuilder sb = new StringBuilder();
+        int count = 0;
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
-            if(entry.getValue()!=0.000000){
-                sb.append(String.format("%45s %-30s %10.6f %n", " ",entry.getKey(), entry.getValue()));            
-            }           
+            if (entry.getValue() != 0.000000 && !DocumentParser.tfidfMap.containsKey(entry.getKey())) {
+                sb.append(String.format("%49s %-30s %10.6f %n", " ", entry.getKey(), entry.getValue()));
+                count++;
+                if (count > 2) {
+                    break;
+                }
+            }
         }
         return sb.toString();
     }
 
-    public void printWordMaps() {
-        System.out.println(fileName + ": " + wordCount);
-        for (Map.Entry<String, Integer> entry : wordMaps.entrySet()) {
-            System.out.print("\t");
-            System.out.println(entry.getKey() + "\t" + entry.getValue());
+    public String getFileInfoVectors() {
+        String column0 = "Term(s)";
+        String column1 = "TF-IDF Value(s)";
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-30s %10s",column0,column1));
+        sb.append("\n");
+        sb.append(initDivider());
+        for (Map.Entry<String, Double> entry : tfidfVectors.entrySet()) {
+            sb.append(String.format("%-30s %10.6f %n", entry.getKey(), entry.getValue()));
         }
+        sb.append(initDivider());
+        sb.append(String.format("Total: %23s %10.6f", " ",DocumentParser.tfidfMap.get(fileName)));
+        return sb.toString();
     }
 
+    public String getFileInfoConsineMaps() {
+        String column0 = "File(s)";
+        String column1 = "Cosine Value(s)";
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-30s %10s",column0,column1));
+        sb.append("\n");
+        sb.append(initDivider());
+        for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
+            sb.append(String.format("%-30s %10.6f %n", entry.getKey(), entry.getValue()));
+        }
+
+        return sb.toString();
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public int getWordCount() {
+        return wordCount;
+    }
+
+    public HashMap<String, Integer> getWordMaps() {
+        return wordMaps;
+    }
+
+    private static String initDivider() {
+        String s = "=";
+        int n = 45;
+        StringBuilder sb = new StringBuilder(s.length() * n);
+        for (int i = 0; i < n; i++) {
+            sb.append(s);
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+    
     private void initHashMap(String[] words) {
         String[] cmpWords = words.clone();
         for (String word : words) {
@@ -89,8 +138,7 @@ public class Document {
                     }
                     wordMaps.put(word, count);
                 }
-            }
-            else if (!wordMaps.containsKey(word)) {
+            } else if (!wordMaps.containsKey(word)) {
                 for (int i = 0; i < cmpWords.length; i++) {
                     if (word.equalsIgnoreCase(cmpWords[i])) {
                         count++;
@@ -102,9 +150,17 @@ public class Document {
         }
     }
 
-    public void sortCosineMap() {
-        List<Map.Entry<String, Double>> entries = new LinkedList<>(cosineMaps.entrySet());
+    public void printWordMaps() {
+        System.out.println(fileName + ": " + wordCount);
+        for (Map.Entry<String, Integer> entry : wordMaps.entrySet()) {
+            System.out.print("\t");
+            System.out.println(entry.getKey() + "\t" + entry.getValue());
+        }
+    }
 
+    public static HashMap<String,Double> sortMaps(HashMap<String,Double> unsortedMap){
+        List<Map.Entry<String, Double>> entries = new LinkedList<>(unsortedMap.entrySet());
+        HashMap<String, Double> sortedMap = new LinkedHashMap<>();
         Collections.sort(entries, new Comparator<Map.Entry<String, Double>>() {
             @Override
             public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
@@ -112,28 +168,10 @@ public class Document {
             }
         });
         Collections.reverse(entries);//descending order
-        HashMap<String, Double> sortedMap = new LinkedHashMap<>();
-        int count = 0;
         for (Map.Entry<String, Double> entry : entries) {
             sortedMap.put(entry.getKey(), entry.getValue());
-            count++;
-            if (count > 2) {
-                break;
-            }
         }
-        cosineMaps = sortedMap;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public int getWordCount() {
-        return wordCount;
-    }
-
-    public HashMap<String, Integer> getWordMaps() {
-        return wordMaps;
+        return sortedMap;
     }
 
     public void setCosineMaps(HashMap<String, Double> cosineMaps) {

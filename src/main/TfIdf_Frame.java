@@ -9,17 +9,15 @@ import calculation.StopWord;
 import document.DocumentParser;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author crimson
+ * @author Daniel
  */
 public class TfIdf_Frame extends javax.swing.JFrame {
 
@@ -78,18 +76,20 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             searchTermCheckBox.setSelected(false);
             dp = null;
             sw = null;
-        }
-        searchTextField.setEnabled(false);
-        calculateBtn.setEnabled(false);
-
+            searchTextField.setEnabled(false);
+            calculateBtn.setEnabled(false);
+        }      
     }
 
     public void resetTopList() {
-        if (DocumentParser.tfidfMap != null) {
-            DefaultListModel model = (DefaultListModel) topList.getModel();
-            model.removeAllElements();
+        try {
+            if (DocumentParser.tfidfMap != null) {
+                DefaultListModel model = (DefaultListModel) topList.getModel();
+                model.removeAllElements();
+            }
+            topList.update(topList.getGraphics());
+        } catch (Exception e) {
         }
-        topList.update(topList.getGraphics());
     }
 
     /**
@@ -119,10 +119,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         stopWordPathText = new javax.swing.JTextField();
         chooserFolderButton = new javax.swing.JButton();
         chooseStopWordButton = new javax.swing.JButton();
-        fileDialog = new javax.swing.JDialog();
-        fileDialogPanel = new javax.swing.JPanel();
-        fileScrollPane = new javax.swing.JScrollPane();
-        fileTextArea = new javax.swing.JTextArea();
         fileInfoDialog = new javax.swing.JDialog();
         fileInfoPanel = new javax.swing.JPanel();
         fileTitleLabel = new javax.swing.JLabel();
@@ -132,10 +128,10 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         tfidfTextArea = new javax.swing.JTextArea();
         tfidfLabel = new javax.swing.JLabel();
         cosineSimScrollPane1 = new javax.swing.JScrollPane();
-        wordFreqTextArea1 = new javax.swing.JTextArea();
+        cosineTextArea = new javax.swing.JTextArea();
         cosineSimLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        filenameTextField = new javax.swing.JTextField();
+        locationTextField = new javax.swing.JTextField();
         fullPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
         calculateBtn = new javax.swing.JButton();
@@ -150,8 +146,9 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         MenuBar = new javax.swing.JMenuBar();
         settingMenu = new javax.swing.JMenu();
         chooseOptions = new javax.swing.JMenuItem();
-        authorMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
+        contentMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         dirChooser.setDialogTitle("");
         dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
@@ -308,41 +305,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        fileDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        fileDialog.setTitle("File Viewer");
-
-        fileDialogPanel.setBackground(new java.awt.Color(254, 254, 254));
-
-        fileScrollPane.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-
-        fileTextArea.setEditable(false);
-        fileTextArea.setColumns(20);
-        fileTextArea.setLineWrap(true);
-        fileTextArea.setRows(5);
-        fileScrollPane.setViewportView(fileTextArea);
-
-        javax.swing.GroupLayout fileDialogPanelLayout = new javax.swing.GroupLayout(fileDialogPanel);
-        fileDialogPanel.setLayout(fileDialogPanelLayout);
-        fileDialogPanelLayout.setHorizontalGroup(
-            fileDialogPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fileScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
-        );
-        fileDialogPanelLayout.setVerticalGroup(
-            fileDialogPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fileScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout fileDialogLayout = new javax.swing.GroupLayout(fileDialog.getContentPane());
-        fileDialog.getContentPane().setLayout(fileDialogLayout);
-        fileDialogLayout.setHorizontalGroup(
-            fileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fileDialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        fileDialogLayout.setVerticalGroup(
-            fileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fileDialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         fileInfoDialog.setTitle("File Information");
 
         fileInfoPanel.setBackground(new java.awt.Color(254, 254, 254));
@@ -355,83 +317,89 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         fileLocationLabel.setText("Location:");
 
+        tfidfTextArea.setEditable(false);
         tfidfTextArea.setColumns(20);
+        tfidfTextArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         tfidfTextArea.setRows(5);
         tfidfScrollPane.setViewportView(tfidfTextArea);
 
         tfidfLabel.setText("TF-IDF Vectors");
 
-        wordFreqTextArea1.setColumns(20);
-        wordFreqTextArea1.setRows(5);
-        cosineSimScrollPane1.setViewportView(wordFreqTextArea1);
+        cosineTextArea.setEditable(false);
+        cosineTextArea.setColumns(20);
+        cosineTextArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        cosineTextArea.setRows(5);
+        cosineSimScrollPane1.setViewportView(cosineTextArea);
 
         cosineSimLabel.setText("Cosine Similarity Values");
 
-        jTextField1.setEditable(false);
-
-        jTextField2.setEditable(false);
+        filenameTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filenameTextFieldActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout fileInfoPanelLayout = new javax.swing.GroupLayout(fileInfoPanel);
         fileInfoPanel.setLayout(fileInfoPanelLayout);
         fileInfoPanelLayout.setHorizontalGroup(
             fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(16, 16, 16)
                 .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fileTitleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                        .addComponent(tfidfScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cosineSimScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fileLocationLabel)
-                            .addComponent(filenameLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                            .addComponent(jTextField1))))
-                .addContainerGap())
-            .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                .addGap(88, 88, 88)
+                        .addComponent(tfidfScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addComponent(cosineSimScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(16, 16, 16))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileInfoPanelLayout.createSequentialGroup()
+                .addGap(129, 129, 129)
                 .addComponent(tfidfLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(262, 262, 262)
                 .addComponent(cosineSimLabel)
-                .addGap(62, 62, 62))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileInfoPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fileLocationLabel)
+                    .addComponent(filenameLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(locationTextField)
+                    .addComponent(filenameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(139, 139, 139))
         );
         fileInfoPanelLayout.setVerticalGroup(
             fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(16, 16, 16)
                 .addComponent(fileTitleLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(filenameLabel)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fileLocationLabel)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tfidfLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfidfScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 431, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cosineSimLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cosineSimScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 431, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filenameLabel)
+                    .addComponent(filenameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fileLocationLabel)
+                    .addComponent(locationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cosineSimLabel)
+                    .addComponent(tfidfLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tfidfScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(cosineSimScrollPane1))
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout fileInfoDialogLayout = new javax.swing.GroupLayout(fileInfoDialog.getContentPane());
         fileInfoDialog.getContentPane().setLayout(fileInfoDialogLayout);
         fileInfoDialogLayout.setHorizontalGroup(
             fileInfoDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fileInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(fileInfoDialogLayout.createSequentialGroup()
+                .addComponent(fileInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         fileInfoDialogLayout.setVerticalGroup(
             fileInfoDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -512,21 +480,20 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fullPanelLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(textAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
                     .addComponent(searchTextField))
                 .addGap(18, 18, 18)
                 .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fullPanelLayout.createSequentialGroup()
                         .addComponent(calculateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(71, 71, 71))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fullPanelLayout.createSequentialGroup()
-                        .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(topListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(top10Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(top10Label1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(settingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18))))
+                        .addGap(53, 53, 53))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(topListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(top10Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(top10Label1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(settingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18))
         );
         fullPanelLayout.setVerticalGroup(
             fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -578,12 +545,15 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         MenuBar.add(settingMenu);
 
-        authorMenu.setText("Authors");
-        authorMenu.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
-        MenuBar.add(authorMenu);
-
         helpMenu.setText("Help");
         helpMenu.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+
+        contentMenuItem.setText("Contents");
+        helpMenu.add(contentMenuItem);
+
+        jMenuItem1.setText("About");
+        helpMenu.add(jMenuItem1);
+
         MenuBar.add(helpMenu);
 
         setJMenuBar(MenuBar);
@@ -592,9 +562,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(fullPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(fullPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -634,7 +602,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (!folderPathText.getText().trim().equals("")) {
             int option = JOptionPane.showConfirmDialog(null,
-                    "It may take some time to initialize the document(s).\nAre you sure these are the correct settings?",
+                    "It may take some time to initialize the document(s).\n"
+                            + "Are you sure these are the correct settings?",
                     "Confirm Settings",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -759,7 +728,25 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (DocumentParser.tfidfMap != null) {
             String selected = topList.getSelectedValue().toString();
-            System.out.println(selected);
+            int option = JOptionPane.showConfirmDialog(null,
+                    "You have selected "+ selected +".\n"
+                            + "You sure you want to view its Information?",
+                    "Confirmation",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                    );
+            if(option == JOptionPane.YES_OPTION){
+                filenameTextField.setText(selected);
+                locationTextField.setText(DocumentParser.filePath+File.separator+selected);
+                
+                cosineTextArea.setText(DocumentParser.docSet.get(selected).getFileInfoConsineMaps());
+                cosineTextArea.setCaretPosition(0);
+                tfidfTextArea.setText(DocumentParser.docSet.get(selected).getFileInfoVectors());
+                tfidfTextArea.setCaretPosition(0);
+                fileInfoDialog.pack();
+                fileInfoDialog.setLocationRelativeTo(TfIdf_Frame.this);
+                fileInfoDialog.setVisible(true);
+            }
         }
     }//GEN-LAST:event_topListMouseClicked
 
@@ -771,15 +758,13 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 "Exiting Server Settings", JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
         if (option == JOptionPane.YES_OPTION) {
-            folderPathText.setText(DocumentParser.filePath);
-            stopWordPathText.setText(StopWord.fileName);
-            cosineCheckBox.setEnabled(DocumentParser.enableCosine);
-            stopWordCheckBox.setEnabled(DocumentParser.enableStopWord);
-            wordStemCheckBox.setEnabled(DocumentParser.enableWordStem);
-            searchTermCheckBox.setEnabled(DocumentParser.enableWordExpansion);
-            settingsDialog.dispose();
+            resetSettings();
         }
     }//GEN-LAST:event_cancelSettingButtonMouseClicked
+
+    private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filenameTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_filenameTextFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -791,9 +776,15 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+        String os = System.getProperty("os.name");
+        System.out.println(os);
+        String theme = "Nimbus";
+        if(os.startsWith("Linux")){
+            theme = "GTK+";
+        }
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if (theme.equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -809,7 +800,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             public void run() {
                 new TfIdf_Frame().setVisible(true);
                 JOptionPane.showMessageDialog(null, "Please set application settings before proceeding.");
-
             }
         });
     }
@@ -817,7 +807,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar MenuBar;
     private javax.swing.JLabel additionalFeaturesLabel;
-    private javax.swing.JMenu authorMenu;
     private javax.swing.JButton calculateBtn;
     private javax.swing.JButton cancelSettingButton;
     private javax.swing.JLabel chooseFolderLabel;
@@ -825,25 +814,24 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JButton chooseStopWordButton;
     private javax.swing.JLabel chooseStopWordLabel;
     private javax.swing.JButton chooserFolderButton;
+    private javax.swing.JMenuItem contentMenuItem;
     private javax.swing.JCheckBox cosineCheckBox;
     private javax.swing.JLabel cosineSimLabel;
     private javax.swing.JScrollPane cosineSimScrollPane1;
+    private javax.swing.JTextArea cosineTextArea;
     public static javax.swing.JFileChooser dirChooser;
     public static javax.swing.JFileChooser fileChooser;
-    private javax.swing.JDialog fileDialog;
-    private javax.swing.JPanel fileDialogPanel;
     private javax.swing.JDialog fileInfoDialog;
     private javax.swing.JPanel fileInfoPanel;
     private javax.swing.JLabel fileLocationLabel;
-    private javax.swing.JScrollPane fileScrollPane;
-    private javax.swing.JTextArea fileTextArea;
     private javax.swing.JLabel fileTitleLabel;
     private javax.swing.JLabel filenameLabel;
+    private javax.swing.JTextField filenameTextField;
     private javax.swing.JTextField folderPathText;
     private javax.swing.JPanel fullPanel;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JTextField locationTextField;
     public static javax.swing.JTextArea mainTextArea;
     private javax.swing.JButton okSettingButton;
     private javax.swing.JCheckBox searchTermCheckBox;
@@ -864,7 +852,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JLabel top10Label1;
     private javax.swing.JList topList;
     private javax.swing.JScrollPane topListScrollPane;
-    private javax.swing.JTextArea wordFreqTextArea1;
     private javax.swing.JCheckBox wordStemCheckBox;
     // End of variables declaration//GEN-END:variables
 }
