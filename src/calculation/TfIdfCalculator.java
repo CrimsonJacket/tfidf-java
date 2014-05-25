@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class TfIdfCalculator {
 
-    // Usage of Augmented Frequency : To prevent a bias towards larger documents
+    // Usage of Augmented Term Frequency : To prevent a bias towards larger documents
     public double calculateTF(HashMap<String, Integer> map, String termsToCheck, int wordCount) {
         double count = 0;
         for(Map.Entry<String,Integer> entry: map.entrySet()){

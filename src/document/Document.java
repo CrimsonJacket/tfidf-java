@@ -26,9 +26,10 @@ import java.util.Map;
  */
 public class Document {
 
-    private String fileName;
+    private final String fileName;
     public HashMap<String, Double> cosineMaps = new HashMap<>();
     private HashMap<String, Integer> wordMaps = new HashMap<>();
+    public HashMap<String, Double> tfidfVectors = new HashMap<>();
     private int wordCount;
 
     public Document(File f) throws FileNotFoundException, IOException {
@@ -46,7 +47,7 @@ public class Document {
             String[] words = sb.toString().replaceAll("[\\W&&[^\\s]]\\w*", " ").split("\\s+");//to get individual terms
             String[] tmpWords = new String[words.length];
             if (DocumentParser.enableWordStem) {
-                for (int i = 0; i < tmpWords.length; i++) {
+                for (int i = 0; i < words.length; i++) {
                     tmpWords[i] = words[i].replace(words[i], WordStemming.implementStem(words[i]));
                 }
                 words = tmpWords;
@@ -59,8 +60,8 @@ public class Document {
     public String getCosineMaps() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
-            if(entry.getValue()!=0.000000 && !DocumentParser.tfidfMap.containsKey(entry.getKey())){
-                sb.append(String.format("%40s %-30s %10.6f %n", " ",entry.getKey(), entry.getValue()));            
+            if(entry.getValue()!=0.000000){
+                sb.append(String.format("%45s %-30s %10.6f %n", " ",entry.getKey(), entry.getValue()));            
             }           
         }
         return sb.toString();

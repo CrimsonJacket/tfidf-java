@@ -1,14 +1,13 @@
 package document;
 
 import calculation.CosineSimilarity;
+import calculation.SearchTermExpansion;
 import calculation.StopWord;
 import calculation.TfIdfCalculator;
 import calculation.WordStemming;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,18 +33,14 @@ import main.TfIdf_Frame;
 public class DocumentParser {
 
     public static List<Document> docArray = null;
-    public List<String> allTerms = new ArrayList<>(); //store all terms
-    public HashMap<String, Double[]> tfidfVectorMap = new HashMap<>();
+    public static List<String> allTerms = null; //store all terms
+    public HashMap<String, Double[]> tfidfVectorMap = null;
     public static HashMap<String, Double> tfidfMap = null;
     public static String filePath;
-    public static boolean enableCosine = true;
-    public static boolean enableStopWord = true;
-    public static boolean enableWordStem = true;
-    public static boolean enableWordExpansion = true;
-
-    public DocumentParser() {
-
-    }
+    public static boolean enableCosine;
+    public static boolean enableStopWord;
+    public static boolean enableWordStem;
+    public static boolean enableWordExpansion;
 
     public DocumentParser(boolean cosine, boolean stopword, boolean wordstem, boolean wordexp, String filePath) {
         DocumentParser.enableCosine = cosine;
@@ -60,20 +55,14 @@ public class DocumentParser {
         TfIdf_Frame.appendSettingsMessage("Stop Word: " + enableStopWord);
         TfIdf_Frame.appendSettingsMessage("Word Stemming: " + enableWordStem);
         TfIdf_Frame.appendSettingsMessage("Search Expansion: " + enableWordExpansion);
-        DocumentParser.tfidfMap = new HashMap<>();
-    }
 
-    public void clearMaps() {
-        tfidfVectorMap.clear();
-        tfidfMap.clear();
     }
 
     public void parseFiles() throws FileNotFoundException, IOException {
         File[] allfiles = new File(filePath).listFiles();
         docArray = new ArrayList<>(allfiles.length);
-        
-        
-        TfIdf_Frame.appendMessage("Initializing HashMaps");
+  
+        TfIdf_Frame.setMessage("Initializing HashMaps");
         for (File f : allfiles) {
             Document doc = new Document(f);
             docArray.add(doc);
@@ -84,8 +73,20 @@ public class DocumentParser {
 
     public void setTerms(String userInput) throws IOException {
         allTerms = new ArrayList<>();
-        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
+        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");       
         for (String t : terms) {
+            //Search Expansion
+            
+            //Stop Words
+            if(enableStopWord){
+                if(StopWord.hs.contains(t)){
+                    break;//ignores the term & does not add it to allTerms
+                }
+            }
+            //Word Stem
+            if (enableWordStem) {
+                t = WordStemming.implementStem(t);
+            }
             if (!allTerms.contains(t)) {
                 allTerms.add(t);
             }
@@ -93,51 +94,49 @@ public class DocumentParser {
     }
 
     public void tfIdfCalculator() {
+        TfIdf_Frame.setMessage("Calculating TF-IDF Vectors & TF-IDF Values...");
+        tfidfVectorMap = new HashMap<>();
+        tfidfMap = new HashMap<>();
         for (Document doc : docArray) {
             double tf = 0.0;
             double idf = 0.0;
+            double finalTfIdf = 0.0;
             Double[] tfidfVectors = new Double[allTerms.size()];
-            int count = 0;
+            int count = 0;           
             for (String term : allTerms) {
                 if(enableWordStem){
                     term = WordStemming.implementStem(term);
                 }
                 tf = new TfIdfCalculator().calculateTF(doc.getWordMaps(), term, doc.getWordCount());
                 idf = new TfIdfCalculator().calculateIDF(term, tf);
+                finalTfIdf += tf*idf;
                 tfidfVectors[count] = tf * idf;
-                count++;
+                count++;                
+                doc.tfidfVectors.put(term, tf*idf);
             }
             tfidfVectorMap.put(doc.getFileName(), tfidfVectors);// Vectors are needed for Cosine Similarity Calculation
+            tfidfMap.put(doc.getFileName(), finalTfIdf);
         }
         TfIdf_Frame.appendMessage("[+] Populated TF-IDF Vectors");
-        for (Map.Entry<String, Double[]> entry : tfidfVectorMap.entrySet()) {
-            double finalTfIdf = 0.0;
-            Double[] tmpArr = entry.getValue();
-            for (double tfidf : tmpArr) {
-                finalTfIdf += tfidf; //total of tf-idf values for each document
-            }
-
-            tfidfMap.put(entry.getKey(), finalTfIdf);// Calculates final TfIdf value of all documents
-        }
         TfIdf_Frame.appendMessage("[+] Calculated TF-IDF Values");
     }
-
-    public void cosineSimilarityCalculator() {
-        //TfIdf_Frame.appendMessage("Fetching TF-IDF Vectors & Calulating Cosine Similarity...");
-        for (Document doc : docArray) {
+    
+    public void cosineSimilarityCalculator(){
+        TfIdf_Frame.appendMessage("Fetching TF-IDF Vectors & Calulating Cosine Similarity...");
+        for(Document doc : docArray){
             HashMap<String, Double> cosineMap = new HashMap<>();
-            Double[] docVector = tfidfVectorMap.get(doc.getFileName());
-            for (Map.Entry<String, Double[]> entry : tfidfVectorMap.entrySet()) {
+            for(Document docToCompare : docArray){
                 double cosineSimilarity = 0.0;
-                if (!entry.getKey().equalsIgnoreCase(doc.getFileName())) {
-                    Double[] vectorToCheck = entry.getValue();
-                    cosineSimilarity = new CosineSimilarity().getCosineSimilarity(docVector, vectorToCheck);
-                    cosineMap.put(entry.getKey(), cosineSimilarity);
+                if(doc.getFileName().equalsIgnoreCase(docToCompare.getFileName())){
+                    break;
                 }
+                cosineSimilarity = new CosineSimilarity().calculateCosineSimilarity(doc.tfidfVectors, docToCompare.tfidfVectors);
+                cosineMap.put(docToCompare.getFileName(), cosineSimilarity);
             }
             doc.setCosineMaps(cosineMap);
             doc.sortCosineMap();
         }
+        TfIdf_Frame.appendMessage("[+] Calculated Cosine Similarity Values");
     }
 
     public void sortIndex() {
@@ -162,11 +161,12 @@ public class DocumentParser {
             }
         }
         tfidfMap = sortedMap;
+        TfIdf_Frame.appendMessage("[+] Sorted Index");
     }
 
     private static String initDivider() {
         String s = "=";
-        int n = 90;
+        int n = 95;
         StringBuilder sb = new StringBuilder(s.length() * n);
         for (int i = 0; i < n; i++) {
             sb.append(s);
@@ -183,10 +183,10 @@ public class DocumentParser {
 
         StringBuilder finalBuilder = new StringBuilder();
 
-        finalBuilder.append("Results:\n");
+        finalBuilder.append("Results:\n\n");
         finalBuilder.append(initDivider());
 
-        finalBuilder.append(String.format("%-25s %10s %15s %35s %n",
+        finalBuilder.append(String.format("%-30s %10s %15s %35s %n",
                 column1,
                 column2,
                 column3,
@@ -194,7 +194,7 @@ public class DocumentParser {
         finalBuilder.append(initDivider());
 
         for (Map.Entry<String, Double> entry : tfidfMap.entrySet()) {
-            finalBuilder.append(String.format("%-25s %10.6f %n", entry.getKey(), entry.getValue()));
+            finalBuilder.append(String.format("%-30s %10.6f %n", entry.getKey(), entry.getValue()));
             if (enableCosine) {
                 for (Document doc : docArray) {
                     if (entry.getKey().equalsIgnoreCase(doc.getFileName())) {
@@ -238,7 +238,6 @@ public class DocumentParser {
         for (Map.Entry<String, Double> entry : tfidfMap.entrySet()) {
             model.addElement(entry.getKey());
         }
-        clearMaps();
         return model;
     }
 }

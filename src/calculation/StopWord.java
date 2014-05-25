@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -21,8 +20,6 @@ public class StopWord {
     
     public static String fileName;
     public static HashSet hs = new HashSet();
-    public HashMap<String, Integer> hm;
-    public int wordCount;
     public String[] stopWords;
     
     public StopWord(String cvsFilename){
@@ -41,20 +38,5 @@ public class StopWord {
             hs.add(s);
         }
     }
-
-    /**
-     * @return the hm
-     */
-    public HashMap<String, Integer> getHm() {
-        return hm;
-    }
-
-    /**
-     * @return the wordCount
-     */
-    public int getWordCount() {
-        return wordCount;
-    }
-    
 }
     

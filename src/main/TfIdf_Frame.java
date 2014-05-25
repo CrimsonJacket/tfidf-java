@@ -12,7 +12,9 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,7 +24,7 @@ import javax.swing.JOptionPane;
 public class TfIdf_Frame extends javax.swing.JFrame {
 
     private DocumentParser dp = null;
-    private StopWord sw;
+    private StopWord sw = null;
 
     /**
      * Creates new form TfIdf_Frame
@@ -39,16 +41,16 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         setLocation(x, y);
     }
 
-    public static void setSettingsMessage(String msg){
-        settingTextArea.setText(msg+"\n");
+    public static void setSettingsMessage(String msg) {
+        settingTextArea.setText(msg + "\n");
         settingTextArea.update(settingTextArea.getGraphics());
     }
-    
-    public static void appendSettingsMessage(String msg){
-        settingTextArea.append(msg+"\n");
+
+    public static void appendSettingsMessage(String msg) {
+        settingTextArea.append(msg + "\n");
         settingTextArea.update(settingTextArea.getGraphics());
     }
-    
+
     public static void setMessage(String msg) {
         mainTextArea.setText(msg + "\n");
         mainTextArea.update(mainTextArea.getGraphics());
@@ -57,6 +59,37 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     public static void appendMessage(String msg) {
         mainTextArea.append(msg + "\n");
         mainTextArea.update(mainTextArea.getGraphics());
+    }
+
+    public void resetSettings() {
+        if (dp != null && sw != null) {
+            folderPathText.setText(DocumentParser.filePath);
+            stopWordPathText.setText(StopWord.fileName);
+            cosineCheckBox.setSelected(DocumentParser.enableCosine);
+            stopWordCheckBox.setSelected(DocumentParser.enableStopWord);
+            wordStemCheckBox.setSelected(DocumentParser.enableWordStem);
+            searchTermCheckBox.setSelected(DocumentParser.enableWordExpansion);
+        } else {
+            folderPathText.setText("");
+            stopWordPathText.setText("");
+            cosineCheckBox.setSelected(false);
+            stopWordCheckBox.setSelected(false);
+            wordStemCheckBox.setSelected(false);
+            searchTermCheckBox.setSelected(false);
+            dp = null;
+            sw = null;
+        }
+        searchTextField.setEnabled(false);
+        calculateBtn.setEnabled(false);
+
+    }
+
+    public void resetTopList() {
+        if (DocumentParser.tfidfMap != null) {
+            DefaultListModel model = (DefaultListModel) topList.getModel();
+            model.removeAllElements();
+        }
+        topList.update(topList.getGraphics());
     }
 
     /**
@@ -90,6 +123,19 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fileDialogPanel = new javax.swing.JPanel();
         fileScrollPane = new javax.swing.JScrollPane();
         fileTextArea = new javax.swing.JTextArea();
+        fileInfoDialog = new javax.swing.JDialog();
+        fileInfoPanel = new javax.swing.JPanel();
+        fileTitleLabel = new javax.swing.JLabel();
+        filenameLabel = new javax.swing.JLabel();
+        fileLocationLabel = new javax.swing.JLabel();
+        tfidfScrollPane = new javax.swing.JScrollPane();
+        tfidfTextArea = new javax.swing.JTextArea();
+        tfidfLabel = new javax.swing.JLabel();
+        cosineSimScrollPane1 = new javax.swing.JScrollPane();
+        wordFreqTextArea1 = new javax.swing.JTextArea();
+        cosineSimLabel = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
         fullPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
         calculateBtn = new javax.swing.JButton();
@@ -157,10 +203,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         chooseFolderLabel.setText("Choose Folder: ");
 
         chooseStopWordLabel.setText("StopWord File: ");
-
-        folderPathText.setText("/home/crimson/NetBeansProjects/tfidf-java/dataFiles.original");
-
-        stopWordPathText.setText("/home/crimson/NetBeansProjects/tfidf-java/StopWord.csv");
 
         chooserFolderButton.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
         chooserFolderButton.setText("...");
@@ -301,6 +343,101 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             .addComponent(fileDialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        fileInfoDialog.setTitle("File Information");
+
+        fileInfoPanel.setBackground(new java.awt.Color(254, 254, 254));
+
+        fileTitleLabel.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        fileTitleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        fileTitleLabel.setText("File Information");
+
+        filenameLabel.setText("Filename:");
+
+        fileLocationLabel.setText("Location:");
+
+        tfidfTextArea.setColumns(20);
+        tfidfTextArea.setRows(5);
+        tfidfScrollPane.setViewportView(tfidfTextArea);
+
+        tfidfLabel.setText("TF-IDF Vectors");
+
+        wordFreqTextArea1.setColumns(20);
+        wordFreqTextArea1.setRows(5);
+        cosineSimScrollPane1.setViewportView(wordFreqTextArea1);
+
+        cosineSimLabel.setText("Cosine Similarity Values");
+
+        jTextField1.setEditable(false);
+
+        jTextField2.setEditable(false);
+
+        javax.swing.GroupLayout fileInfoPanelLayout = new javax.swing.GroupLayout(fileInfoPanel);
+        fileInfoPanel.setLayout(fileInfoPanelLayout);
+        fileInfoPanelLayout.setHorizontalGroup(
+            fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fileTitleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                        .addComponent(tfidfScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cosineSimScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fileLocationLabel)
+                            .addComponent(filenameLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                            .addComponent(jTextField1))))
+                .addContainerGap())
+            .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                .addGap(88, 88, 88)
+                .addComponent(tfidfLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(cosineSimLabel)
+                .addGap(62, 62, 62))
+        );
+        fileInfoPanelLayout.setVerticalGroup(
+            fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fileTitleLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(filenameLabel)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(fileLocationLabel)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tfidfLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfidfScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 431, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(fileInfoPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(cosineSimLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cosineSimScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 431, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout fileInfoDialogLayout = new javax.swing.GroupLayout(fileInfoDialog.getContentPane());
+        fileInfoDialog.getContentPane().setLayout(fileInfoDialogLayout);
+        fileInfoDialogLayout.setHorizontalGroup(
+            fileInfoDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        fileInfoDialogLayout.setVerticalGroup(
+            fileInfoDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TF-IDF Java Program");
         setBackground(new java.awt.Color(254, 254, 254));
@@ -346,6 +483,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         topList.setBackground(new java.awt.Color(254, 254, 254));
         topList.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         topList.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
+        topList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         topList.setAutoscrolls(false);
         topList.setEnabled(false);
         topList.setFocusable(false);
@@ -407,9 +545,9 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(textAreaScrollPane)))
                 .addGap(18, 18, 18)
-                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(calculateBtn))
+                .addGroup(fullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(calculateBtn)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18))
         );
 
@@ -487,8 +625,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
     private void chooseOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseOptionsActionPerformed
         // TODO add your handling code here:
-        settingsDialog.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width) / 2 - getWidth() / 2, (Toolkit.getDefaultToolkit().getScreenSize().height) / 2 - getHeight() / 2);
         settingsDialog.pack();
+        settingsDialog.setLocationRelativeTo(TfIdf_Frame.this);
         settingsDialog.setVisible(true);
     }//GEN-LAST:event_chooseOptionsActionPerformed
 
@@ -496,43 +634,74 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (!folderPathText.getText().trim().equals("")) {
             int option = JOptionPane.showConfirmDialog(null,
-                    "Are you sure these are the correct settings?",
+                    "It may take some time to initialize the document(s).\nAre you sure these are the correct settings?",
                     "Confirm Settings",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
-                if(dp!=null && DocumentParser.filePath.equalsIgnoreCase(folderPathText.getText()) && StopWord.fileName.equalsIgnoreCase(stopWordPathText.getText())){
+                if (dp != null && DocumentParser.filePath.equalsIgnoreCase(folderPathText.getText())) {
+                    resetTopList();
                     DocumentParser.setEnableCosine(cosineCheckBox.isSelected());
                     DocumentParser.setEnableStopWord(stopWordCheckBox.isSelected());
                     DocumentParser.setEnableWordStem(wordStemCheckBox.isSelected());
                     DocumentParser.setEnableWordExpansion(searchTermCheckBox.isSelected());
                     settingsDialog.dispose();
+                    if (DocumentParser.enableStopWord && sw == null) {
+                        try {
+                            sw = new StopWord(stopWordPathText.getText());
+                            sw.initStopWords();
+                            appendSettingsMessage("StopWord Path: " + StopWord.fileName);
+                        } catch (IOException iOException) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Stop Words cannot be loaded.\n"
+                                            + "This setting will be ignored",
+                                    "Settings Error",
+                                    JOptionPane.ERROR_MESSAGE);   
+                            DocumentParser.setEnableStopWord(false);
+                            stopWordCheckBox.setSelected(false);
+                        }
+                    }
                     setSettingsMessage("Folder Path: " + DocumentParser.filePath);
                     appendSettingsMessage("StopWord Path: " + StopWord.fileName);
                     appendSettingsMessage("");
-                    appendSettingsMessage("Cosine Similarity: " + cosineCheckBox.isSelected());
-                    appendSettingsMessage("Stop Word: " + stopWordCheckBox.isSelected());
-                    appendSettingsMessage("Word Stemming: " + wordStemCheckBox.isSelected());
-                    appendSettingsMessage("Search Expansion: " + searchTermCheckBox.isSelected());
+                    appendSettingsMessage("Cosine Similarity: " + DocumentParser.enableCosine);
+                    appendSettingsMessage("Stop Word: " + DocumentParser.enableStopWord);
+                    appendSettingsMessage("Word Stemming: " + DocumentParser.enableWordStem);
+                    appendSettingsMessage("Search Expansion: " + DocumentParser.enableWordExpansion);
+                    try {
+                        mainTextArea.setCaretPosition(0);
+                        dp.parseFiles();
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null,
+                                "Invalid Settings. Please Try Again",
+                                "Settings Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        resetSettings();
+                    }
                 } else {
                     try {
-                        sw = new StopWord(stopWordPathText.getText());
-                        sw.initStopWords();
+                        if (stopWordCheckBox.isSelected()) {
+                            sw = new StopWord(stopWordPathText.getText());
+                            sw.initStopWords();
+                        }
                         dp = new DocumentParser(cosineCheckBox.isSelected(), stopWordCheckBox.isSelected(), wordStemCheckBox.isSelected(), searchTermCheckBox.isSelected(), folderPathText.getText());
                         settingsDialog.dispose();
                         dp.parseFiles();
-                        dp.printDocs();
                         searchTextField.setEnabled(true);
                         calculateBtn.setEnabled(true);
                     } catch (IOException ex) {
-                        appendMessage("Error occured while opening/reading folder/file.\n"
-                                + "Please check settings and files.");
+                        JOptionPane.showMessageDialog(null,
+                                "Invalid Settings. Please Try Again",
+                                "Settings Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        resetSettings();
                     }
                 }
             }
 
         } else {
             JOptionPane.showMessageDialog(null, "Invalid Folder Path. Please Try Again", "Settings Error", JOptionPane.ERROR_MESSAGE);
+            resetSettings();
         }
     }//GEN-LAST:event_okSettingButtonMouseClicked
 
@@ -559,40 +728,39 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_chooseStopWordButtonMouseClicked
 
     private void calculateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calculateBtnMouseClicked
-        if (!searchTextField.getText().trim().equals("")&&!searchTextField.getText().equalsIgnoreCase("[ Enter Search Term(s) ]")) {
+        if (!searchTextField.getText().trim().equals("") && !searchTextField.getText().equalsIgnoreCase("[ Enter Search Term(s) ]")) {
             try {
                 topList.removeAll();
                 dp.setTerms(searchTextField.getText());
                 searchTextField.setText("[ Enter Search Term(s) ]");
-                setMessage("Calculating TF-IDF Vectors & TF-IDF Values...");
                 dp.tfIdfCalculator();
-                appendMessage("Fetching TF-IDF Vectors & Calulating Cosine Similarity...");
-                dp.cosineSimilarityCalculator(); 
-                appendMessage("[+] Calculated Cosine Similarity Values");
-                dp.sortIndex();
-                appendMessage("[+] Sorted Index");
+                if (DocumentParser.enableCosine) {
+                    dp.cosineSimilarityCalculator();
+                }
+                dp.sortIndex();               
                 dp.printIndex();
                 topList.setModel(dp.populateJList());
                 topList.setEnabled(true);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Invalid User Input. "
-                    + "Please type search term(s) again.", 
-                    "Search Error", JOptionPane.ERROR_MESSAGE);
+                        + "Please type search term(s) again.",
+                        "Search Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Invalid User Input. "
-                    + "Please type search term(s) again.", 
+                    + "Please type search term(s) again.",
                     "Search Error", JOptionPane.ERROR_MESSAGE);
         }
-        
-        
+
+
     }//GEN-LAST:event_calculateBtnMouseClicked
 
     private void topListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_topListMouseClicked
         // TODO add your handling code here:
-        if(DocumentParser.tfidfMap!=null){
+        if (DocumentParser.tfidfMap != null) {
             String selected = topList.getSelectedValue().toString();
-        }       
+            System.out.println(selected);
+        }
     }//GEN-LAST:event_topListMouseClicked
 
     private void cancelSettingButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelSettingButtonMouseClicked
@@ -637,6 +805,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new TfIdf_Frame().setVisible(true);
                 JOptionPane.showMessageDialog(null, "Please set application settings before proceeding.");
@@ -657,15 +826,24 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JLabel chooseStopWordLabel;
     private javax.swing.JButton chooserFolderButton;
     private javax.swing.JCheckBox cosineCheckBox;
+    private javax.swing.JLabel cosineSimLabel;
+    private javax.swing.JScrollPane cosineSimScrollPane1;
     public static javax.swing.JFileChooser dirChooser;
     public static javax.swing.JFileChooser fileChooser;
     private javax.swing.JDialog fileDialog;
     private javax.swing.JPanel fileDialogPanel;
+    private javax.swing.JDialog fileInfoDialog;
+    private javax.swing.JPanel fileInfoPanel;
+    private javax.swing.JLabel fileLocationLabel;
     private javax.swing.JScrollPane fileScrollPane;
     private javax.swing.JTextArea fileTextArea;
+    private javax.swing.JLabel fileTitleLabel;
+    private javax.swing.JLabel filenameLabel;
     private javax.swing.JTextField folderPathText;
     private javax.swing.JPanel fullPanel;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     public static javax.swing.JTextArea mainTextArea;
     private javax.swing.JButton okSettingButton;
     private javax.swing.JCheckBox searchTermCheckBox;
@@ -679,10 +857,14 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JCheckBox stopWordCheckBox;
     private javax.swing.JTextField stopWordPathText;
     private javax.swing.JScrollPane textAreaScrollPane;
+    private javax.swing.JLabel tfidfLabel;
+    private javax.swing.JScrollPane tfidfScrollPane;
+    private javax.swing.JTextArea tfidfTextArea;
     private javax.swing.JLabel top10Label;
     private javax.swing.JLabel top10Label1;
     private javax.swing.JList topList;
     private javax.swing.JScrollPane topListScrollPane;
+    private javax.swing.JTextArea wordFreqTextArea1;
     private javax.swing.JCheckBox wordStemCheckBox;
     // End of variables declaration//GEN-END:variables
 }

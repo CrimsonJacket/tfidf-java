@@ -8,6 +8,8 @@ package calculation;
  *
  * @author user
  */
+
+
 public class WordStemming {
     private char[] b;
    private int i,     /* offset into b */
