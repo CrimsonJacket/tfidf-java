@@ -23,7 +23,7 @@ public class StopWord {
     public String[] stopWords;
     
     public StopWord(String cvsFilename){
-        StopWord.fileName=cvsFilename;       
+        this.fileName=cvsFilename;       
     }
     
     public void initStopWords() throws FileNotFoundException, IOException{

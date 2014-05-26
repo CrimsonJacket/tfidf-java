@@ -51,7 +51,7 @@ public class SearchTermExpansion {
                 TfIdf_Frame.appendMessage("    Failed to expand term search");
                 break;
             }
-            TfIdf_Frame.appendMessage("    Processing Google Search Results "+ (i+1) + " ~ " + (i + 4));
+            TfIdf_Frame.appendMessage("    Processing " + (i+1) + " ~ " + (i + 4) + " Google Search Results");
             for (int j = 0; j <= 3; j++) {
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(results.getResponseData().getResults().get(j).getUrl()).get();

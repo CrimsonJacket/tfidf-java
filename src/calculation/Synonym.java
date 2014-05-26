@@ -24,6 +24,7 @@ public class Synonym {
         TfIdf_Frame.appendMessage("    Concatenating new Terms.");
         for (String tmp : tmpTerms) {
             String[] synonyms = wordnet.getSynset(tmp, "n");
+            sb.append(tmp).append(" ");
             if (synonyms != null) {               
                 for (String syn : synonyms) {
                     termsAdded.append(syn).append(" ");

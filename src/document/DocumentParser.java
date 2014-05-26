@@ -96,7 +96,6 @@ public class DocumentParser {
         String expansion;
         String syn;
         String hyp;
-        sb.append(userInput).append(" ");
         if(enableWordExpansion){           
             TfIdf_Frame.appendMessage("[+] Started Search Expansion Sequence. This may take some time.");
             expansion = SearchTermExpansion.SearchTermExpansion(userInput);

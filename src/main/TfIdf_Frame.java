@@ -730,8 +730,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             
             try {
                 topList.removeAll();
-                mainTextArea.setCaretPosition(0);
-                mainTextArea.update(mainTextArea.getGraphics());
+                 mainTextArea.setCaretPosition(0);
+                 mainTextArea.update(mainTextArea.getGraphics());
                 dp.setTerms(searchTextField.getText());
                 searchTextField.setText("[ Enter Search Term(s) ]");
                 dp.tfIdfCalculator();

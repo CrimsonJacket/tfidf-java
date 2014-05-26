@@ -145,7 +145,7 @@ public class Document {
                         cmpWords[i] = null;
                     }
                 }
-                wordMaps.put(word.toLowerCase(), count);
+                wordMaps.put(word, count);
             }
         }
     }
