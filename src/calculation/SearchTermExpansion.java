@@ -39,7 +39,6 @@ public class SearchTermExpansion {
         StringBuilder sb = new StringBuilder();
         query = input;
         searchTerm = new ArrayList<>();
-        TfIdf_Frame.appendMessage("Searching for extra term(s)");
         for (int i = 0; i < 12; i = i + 4) {
             String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&start=" + i + "&q=";
             String charset = "UTF-8";
@@ -48,22 +47,26 @@ public class SearchTermExpansion {
                 URL url = new URL(address + URLEncoder.encode(query, charset));
                 Reader reader = new InputStreamReader(url.openStream(), charset);
                 results = new Gson().fromJson(reader, GoogleResults.class);
-            } catch (Exception e) {               
+            } catch (JsonIOException | JsonSyntaxException | IOException e) {  
+                TfIdf_Frame.appendMessage("    Failed to expand term search");
                 break;
             }
-
+            TfIdf_Frame.appendMessage("    Processing Google Search Results "+ (i+1) + " ~ " + (i + 4));
             for (int j = 0; j <= 3; j++) {
                 try {
                     org.jsoup.nodes.Document doc = Jsoup.connect(results.getResponseData().getResults().get(j).getUrl()).get();
                     sb.append(doc.select("p").text().toLowerCase());
                     words = sb.toString().replaceAll("[\\W&&[^\\s]]\\w*", " ").split("\\W+");
-                } catch (Exception e) {                   
+                    TfIdf_Frame.appendMessage("    Processed Google Search Result " +(i + j + 1));
+                } catch (IOException e) {
+                    TfIdf_Frame.appendMessage("    Failed Processing Google result "+(i+j+1)+". Please check your internet connection or Please try again later.");
+                    
                 }
             }
             
         }
+        
         HashMap<String, Integer> hm = new HashMap();
-
         for (String s : words) {
             int count = 1;
             if (hm.containsKey(s)) {
@@ -72,30 +75,30 @@ public class SearchTermExpansion {
             hm.put(s, count);
         }
 
-        LinkedHashMap<String, Integer> sortedMap = Sort(hm);
-        String[] queryWords = query.toLowerCase().split(" ");
+        HashMap<String, Integer> sortedMap = Sort(hm);
         sb = new StringBuilder();
-        for (String s : queryWords) {
-            sortedMap.remove(s);
-            sb.append(s);
-            sb.append(" ");
-        }
         int count = 0;
         for (Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
             if (DocumentParser.enableStopWord) {
                 if (!StopWord.hs.contains(entry.getKey())) {
-                    sb.append(entry.getKey());
-                    sb.append(" ");
-                    count++;
+                    if(!input.contains(entry.getKey())){
+                        sb.append(entry.getKey());
+                        sb.append(" ");
+                        count++;
+                    }                    
                 }
+            }else{
+                sb.append(entry.getKey());
+                sb.append(" ");
+                count++;
             }
-
             if (count == 5) {
                 break;
             }
         }
-        TfIdf_Frame.appendMessage("[+] Search Expansion.");
-        return sb.toString();
+        TfIdf_Frame.appendMessage("[+] Done: Search Expansion.");
+        TfIdf_Frame.appendMessage("    Term(s) added: " +sb.toString());
+        return sb.toString();       
     }
 
     private static LinkedHashMap Sort(HashMap hashMap) {

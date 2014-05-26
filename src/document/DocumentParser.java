@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import main.TfIdf_Frame;
+import stemmer.Stemmer;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -52,13 +53,15 @@ public class DocumentParser {
         DocumentParser.enableSynonym = syn;
         DocumentParser.enableHyponym = hyp;
         DocumentParser.filePath = filePath;
-        TfIdf_Frame.setSettingsMessage("Folder Path: " + DocumentParser.filePath);
-        TfIdf_Frame.appendSettingsMessage("StopWord Path: " + StopWord.fileName);
+        TfIdf_Frame.setSettingsMessage(String.format("%-20s%-5s","Folder Path: " , DocumentParser.filePath));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-5s","StopWord Path: " , StopWord.fileName));
         TfIdf_Frame.appendSettingsMessage("");
-        TfIdf_Frame.appendSettingsMessage("Cosine Similarity: " + enableCosine);
-        TfIdf_Frame.appendSettingsMessage("Stop Word: " + enableStopWord);
-        TfIdf_Frame.appendSettingsMessage("Word Stemming: " + enableWordStem);
-        TfIdf_Frame.appendSettingsMessage("Search Expansion: " + enableWordExpansion);
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s", "Cosine Similarity: ", enableCosine));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s","Stop Word: " , enableStopWord));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s","Word Stemming: " , enableWordStem));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s","Search Expansion: " , enableWordExpansion));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s","Synonym: " , enableSynonym));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s","Hyponym: " , enableHyponym));
     }
 
     public void parseFiles() throws FileNotFoundException, IOException {
@@ -73,29 +76,53 @@ public class DocumentParser {
         TfIdf_Frame.appendMessage("[+] Documents Loaded");
     }
 
-    public void setTerms(String userInput) throws IOException {
+    public void setTerms(String userInput) throws IOException {;
         allTerms = new ArrayList<>();
         // Search Term Expansion
-        if(enableWordExpansion){
-            userInput = SearchTermExpansion.SearchTermExpansion(userInput);
+        TfIdf_Frame.setMessage("[+] Started Program Sequence");
+        StringBuilder sb = new StringBuilder();
+        if(enableStopWord){           
+            String[] tmpList = userInput.replaceAll("[\\W&&[^\\s]]", "").split("\\W+");
+            for(String tmp : tmpList){
+                if(!StopWord.hs.contains(tmp)&&!tmp.isEmpty()){
+                    sb.append(tmp);
+                    sb.append(" ");
+                }
+            }
+            TfIdf_Frame.appendMessage("[+] Done: StopWords");
+        }
+        userInput = sb.toString();
+        sb = new StringBuilder();
+        String expansion;
+        String syn;
+        String hyp;
+        sb.append(userInput).append(" ");
+        if(enableWordExpansion){           
+            TfIdf_Frame.appendMessage("[+] Started Search Expansion Sequence. This may take some time.");
+            expansion = SearchTermExpansion.SearchTermExpansion(userInput);
+            sb.append(expansion).append(" ");
         }       
         if(enableSynonym){
-            userInput = Synonym.getSynonym(userInput);
+            syn = Synonym.getSynonym(userInput);
+            sb.append(syn).append(" ");
         }
         if(enableHyponym){
-            userInput = Synonym.getHyponym(userInput);
+            hyp = Synonym.getHyponym(userInput);
+            sb.append(hyp).append(" ");
         }
-        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
+        userInput = sb.toString();
+        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", "").split("\\W+");
         for (String t : terms) {
             //Stop Words
             if(enableStopWord){
                 if(StopWord.hs.contains(t)){
-                    break;//ignores the term & does not add it to allTerms
+                    continue;//ignores the term & does not add it to allTerms
                 }
             }
             //Word Stem
             if (enableWordStem) {
-                t = WordStemming.implementStem(t);
+                Stemmer stemmer = new Stemmer();
+                t = stemmer.stem(t);
             }
             //adds the term into the final Term(s) List
             if (!allTerms.contains(t)) {
@@ -106,7 +133,7 @@ public class DocumentParser {
     }
 
     public void tfIdfCalculator() {
-        TfIdf_Frame.setMessage("Calculating TF-IDF Vectors & TF-IDF Values...");
+        TfIdf_Frame.appendMessage("Calculating TF-IDF Vectors & TF-IDF Values...");
         tfidfMap = new HashMap<>();
         for (Map.Entry<String,Document> doc : docSet.entrySet()) {
             doc.getValue().tfidfVectors = new HashMap<>();

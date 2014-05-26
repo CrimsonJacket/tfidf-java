@@ -6,9 +6,8 @@ package calculation;
 
 /**
  *
- * @author user
+ * @author JL
  */
-
 
 public class WordStemming {
     private char[] b;

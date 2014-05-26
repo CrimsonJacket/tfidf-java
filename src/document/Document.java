@@ -61,7 +61,7 @@ public class Document {
         StringBuilder sb = new StringBuilder();
         int count = 0;
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
-            if (entry.getValue() != 0.000000 && !DocumentParser.tfidfMap.containsKey(entry.getKey())) {
+            if (entry.getValue() != 0.000000) {
                 sb.append(String.format("%49s %-30s %10.6f %n", " ", entry.getKey(), entry.getValue()));
                 count++;
                 if (count > 2) {
@@ -136,7 +136,7 @@ public class Document {
                             cmpWords[i] = null;
                         }
                     }
-                    wordMaps.put(word, count);
+                    wordMaps.put(word.toLowerCase(), count);
                 }
             } else if (!wordMaps.containsKey(word)) {
                 for (int i = 0; i < cmpWords.length; i++) {
@@ -145,7 +145,7 @@ public class Document {
                         cmpWords[i] = null;
                     }
                 }
-                wordMaps.put(word, count);
+                wordMaps.put(word.toLowerCase(), count);
             }
         }
     }
