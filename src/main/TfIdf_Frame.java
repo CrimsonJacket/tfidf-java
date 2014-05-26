@@ -66,14 +66,14 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             cosineCheckBox.setSelected(DocumentParser.enableCosine);
             stopWordCheckBox.setSelected(DocumentParser.enableStopWord);
             wordStemCheckBox.setSelected(DocumentParser.enableWordStem);
-            searchTermCheckBox.setSelected(DocumentParser.enableWordExpansion);
+            hypCheckBox.setSelected(DocumentParser.enableWordExpansion);
         } else {
             folderPathText.setText("");
             stopWordPathText.setText("");
             cosineCheckBox.setSelected(false);
             stopWordCheckBox.setSelected(false);
             wordStemCheckBox.setSelected(false);
-            searchTermCheckBox.setSelected(false);
+            hypCheckBox.setSelected(false);
             dp = null;
             sw = null;
             searchTextField.setEnabled(false);
@@ -109,7 +109,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         cosineCheckBox = new javax.swing.JCheckBox();
         wordStemCheckBox = new javax.swing.JCheckBox();
         stopWordCheckBox = new javax.swing.JCheckBox();
-        searchTermCheckBox = new javax.swing.JCheckBox();
+        hypCheckBox = new javax.swing.JCheckBox();
         okSettingButton = new javax.swing.JButton();
         cancelSettingButton = new javax.swing.JButton();
         additionalFeaturesLabel = new javax.swing.JLabel();
@@ -119,6 +119,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         stopWordPathText = new javax.swing.JTextField();
         chooserFolderButton = new javax.swing.JButton();
         chooseStopWordButton = new javax.swing.JButton();
+        synCheckBox = new javax.swing.JCheckBox();
+        searchTermCheckBox = new javax.swing.JCheckBox();
         fileInfoDialog = new javax.swing.JDialog();
         fileInfoPanel = new javax.swing.JPanel();
         fileTitleLabel = new javax.swing.JLabel();
@@ -148,7 +150,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         chooseOptions = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        aboutMenuItem = new javax.swing.JMenuItem();
 
         dirChooser.setDialogTitle("");
         dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
@@ -164,6 +166,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         settingsPanel.setForeground(java.awt.Color.white);
 
         settingsLabel.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        settingsLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         settingsLabel.setText("Settings - Options");
 
         cosineCheckBox.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
@@ -175,8 +178,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         stopWordCheckBox.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
         stopWordCheckBox.setText("Stop Words");
 
-        searchTermCheckBox.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
-        searchTermCheckBox.setText("Search Term Expansion");
+        hypCheckBox.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        hypCheckBox.setText("Hyponyms");
 
         okSettingButton.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
         okSettingButton.setText("OK");
@@ -195,6 +198,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         });
 
         additionalFeaturesLabel.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        additionalFeaturesLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         additionalFeaturesLabel.setText("Additional Features");
 
         chooseFolderLabel.setText("Choose Folder: ");
@@ -217,55 +221,60 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             }
         });
 
+        synCheckBox.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        synCheckBox.setText("Synonyms");
+
+        searchTermCheckBox.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        searchTermCheckBox.setText("Search Term Expansion");
+
         javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
         settingsPanel.setLayout(settingsPanelLayout);
         settingsPanelLayout.setHorizontalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
-                .addContainerGap(139, Short.MAX_VALUE)
+                .addContainerGap(156, Short.MAX_VALUE)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(settingsPanelLayout.createSequentialGroup()
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(chooseStopWordLabel)
+                                    .addComponent(chooseFolderLabel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                                        .addComponent(folderPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(chooserFolderButton))
+                                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                                        .addComponent(stopWordPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(chooseStopWordButton))))
+                            .addGroup(settingsPanelLayout.createSequentialGroup()
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(stopWordCheckBox)
+                                    .addComponent(cosineCheckBox)
+                                    .addComponent(synCheckBox))
+                                .addGap(37, 37, 37)
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(hypCheckBox)
+                                    .addComponent(wordStemCheckBox)
+                                    .addComponent(searchTermCheckBox))))
+                        .addGap(84, 84, 84))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
                         .addComponent(okSettingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(30, 30, 30)
                         .addComponent(cancelSettingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(192, 192, 192))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(stopWordCheckBox)
-                            .addComponent(cosineCheckBox))
-                        .addGap(23, 23, 23)
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(wordStemCheckBox)
-                            .addComponent(searchTermCheckBox))
-                        .addGap(115, 115, 115))
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(chooseStopWordLabel)
-                            .addComponent(chooseFolderLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(settingsPanelLayout.createSequentialGroup()
-                                .addComponent(folderPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(chooserFolderButton))
-                            .addGroup(settingsPanelLayout.createSequentialGroup()
-                                .addComponent(stopWordPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(chooseStopWordButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap())))
-            .addGroup(settingsPanelLayout.createSequentialGroup()
-                .addGap(216, 216, 216)
-                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(additionalFeaturesLabel)
-                    .addComponent(settingsLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(205, 205, 205))))
+            .addComponent(additionalFeaturesLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(settingsLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         settingsPanelLayout.setVerticalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(settingsPanelLayout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(44, 44, 44)
                 .addComponent(settingsLabel)
-                .addGap(28, 28, 28)
+                .addGap(47, 47, 47)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chooseFolderLabel)
                     .addComponent(folderPathText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -275,9 +284,9 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                     .addComponent(chooseStopWordLabel)
                     .addComponent(stopWordPathText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(chooseStopWordButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(additionalFeaturesLabel)
-                .addGap(29, 29, 29)
+                .addGap(43, 43, 43)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cosineCheckBox)
                     .addComponent(wordStemCheckBox))
@@ -285,11 +294,15 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(stopWordCheckBox)
                     .addComponent(searchTermCheckBox))
-                .addGap(54, 54, 54)
+                .addGap(18, 18, 18)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(synCheckBox)
+                    .addComponent(hypCheckBox))
+                .addGap(38, 38, 38)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okSettingButton)
                     .addComponent(cancelSettingButton))
-                .addGap(70, 70, 70))
+                .addGap(52, 52, 52))
         );
 
         javax.swing.GroupLayout settingsDialogLayout = new javax.swing.GroupLayout(settingsDialog.getContentPane());
@@ -413,7 +426,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         fullPanel.setBackground(new java.awt.Color(254, 254, 254));
 
-        searchTextField.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
+        searchTextField.setFont(new java.awt.Font("Monospaced", 0, 15)); // NOI18N
         searchTextField.setText("[ Enter Search ]");
         searchTextField.setEnabled(false);
         searchTextField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -551,8 +564,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         contentMenuItem.setText("Contents");
         helpMenu.add(contentMenuItem);
 
-        jMenuItem1.setText("About");
-        helpMenu.add(jMenuItem1);
+        aboutMenuItem.setText("About");
+        helpMenu.add(aboutMenuItem);
 
         MenuBar.add(helpMenu);
 
@@ -614,6 +627,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                     DocumentParser.setEnableStopWord(stopWordCheckBox.isSelected());
                     DocumentParser.setEnableWordStem(wordStemCheckBox.isSelected());
                     DocumentParser.setEnableWordExpansion(searchTermCheckBox.isSelected());
+                    DocumentParser.setEnableSynonym(synCheckBox.isSelected());
+                    DocumentParser.setEnableHyponym(hypCheckBox.isSelected());
                     settingsDialog.dispose();
                     if (DocumentParser.enableStopWord && sw == null) {
                         try {
@@ -653,7 +668,13 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                             sw = new StopWord(stopWordPathText.getText());
                             sw.initStopWords();
                         }
-                        dp = new DocumentParser(cosineCheckBox.isSelected(), stopWordCheckBox.isSelected(), wordStemCheckBox.isSelected(), searchTermCheckBox.isSelected(), folderPathText.getText());
+                        dp = new DocumentParser(cosineCheckBox.isSelected(), 
+                                                stopWordCheckBox.isSelected(), 
+                                                wordStemCheckBox.isSelected(), 
+                                                searchTermCheckBox.isSelected(), 
+                                                synCheckBox.isSelected(),
+                                                hypCheckBox.isSelected(),
+                                                folderPathText.getText());
                         settingsDialog.dispose();
                         dp.parseFiles();
                         searchTextField.setEnabled(true);
@@ -777,7 +798,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         String os = System.getProperty("os.name");
-        System.out.println(os);
         String theme = "Nimbus";
         if(os.startsWith("Linux")){
             theme = "GTK+";
@@ -806,6 +826,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar MenuBar;
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JLabel additionalFeaturesLabel;
     private javax.swing.JButton calculateBtn;
     private javax.swing.JButton cancelSettingButton;
@@ -830,7 +851,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JTextField folderPathText;
     private javax.swing.JPanel fullPanel;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JCheckBox hypCheckBox;
     private javax.swing.JTextField locationTextField;
     public static javax.swing.JTextArea mainTextArea;
     private javax.swing.JButton okSettingButton;
@@ -844,6 +865,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     public static javax.swing.JPanel settingsPanel;
     private javax.swing.JCheckBox stopWordCheckBox;
     private javax.swing.JTextField stopWordPathText;
+    private javax.swing.JCheckBox synCheckBox;
     private javax.swing.JScrollPane textAreaScrollPane;
     private javax.swing.JLabel tfidfLabel;
     private javax.swing.JScrollPane tfidfScrollPane;

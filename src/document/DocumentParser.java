@@ -1,7 +1,9 @@
 package document;
 
 import calculation.CosineSimilarity;
+import calculation.SearchTermExpansion;
 import calculation.StopWord;
+import calculation.Synonym;
 import calculation.TfIdfCalculator;
 import calculation.WordStemming;
 import java.io.File;
@@ -11,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,12 +41,16 @@ public class DocumentParser {
     public static boolean enableStopWord;
     public static boolean enableWordStem;
     public static boolean enableWordExpansion;
+    public static boolean enableSynonym;
+    public static boolean enableHyponym;
 
-    public DocumentParser(boolean cosine, boolean stopword, boolean wordstem, boolean wordexp, String filePath) {
+    public DocumentParser(boolean cosine, boolean stopword, boolean wordstem, boolean wordexp, boolean syn, boolean hyp, String filePath) {
         DocumentParser.enableCosine = cosine;
         DocumentParser.enableStopWord = stopword;
         DocumentParser.enableWordStem = wordstem;
         DocumentParser.enableWordExpansion = wordexp;  
+        DocumentParser.enableSynonym = syn;
+        DocumentParser.enableHyponym = hyp;
         DocumentParser.filePath = filePath;
         TfIdf_Frame.setSettingsMessage("Folder Path: " + DocumentParser.filePath);
         TfIdf_Frame.appendSettingsMessage("StopWord Path: " + StopWord.fileName);
@@ -70,10 +75,18 @@ public class DocumentParser {
 
     public void setTerms(String userInput) throws IOException {
         allTerms = new ArrayList<>();
-        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");       
+        // Search Term Expansion
+        if(enableWordExpansion){
+            userInput = SearchTermExpansion.SearchTermExpansion(userInput);
+        }       
+        if(enableSynonym){
+            userInput = Synonym.getSynonym(userInput);
+        }
+        if(enableHyponym){
+            userInput = Synonym.getHyponym(userInput);
+        }
+        String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
         for (String t : terms) {
-            //Search Expansion
-            
             //Stop Words
             if(enableStopWord){
                 if(StopWord.hs.contains(t)){
@@ -84,16 +97,19 @@ public class DocumentParser {
             if (enableWordStem) {
                 t = WordStemming.implementStem(t);
             }
+            //adds the term into the final Term(s) List
             if (!allTerms.contains(t)) {
                 allTerms.add(t);
             }
         }
+
     }
 
     public void tfIdfCalculator() {
         TfIdf_Frame.setMessage("Calculating TF-IDF Vectors & TF-IDF Values...");
         tfidfMap = new HashMap<>();
         for (Map.Entry<String,Document> doc : docSet.entrySet()) {
+            doc.getValue().tfidfVectors = new HashMap<>();
             double tf = 0.0;
             double idf = 0.0;
             double finalTfIdf = 0.0;         
@@ -111,6 +127,14 @@ public class DocumentParser {
         }
         TfIdf_Frame.appendMessage("[+] Populated TF-IDF Vectors");
         TfIdf_Frame.appendMessage("[+] Calculated TF-IDF Values");
+    }
+
+    public static void setEnableSynonym(boolean enableSynonym) {
+        DocumentParser.enableSynonym = enableSynonym;
+    }
+
+    public static void setEnableHyponym(boolean enableHyponym) {
+        DocumentParser.enableHyponym = enableHyponym;
     }
     
     public void cosineSimilarityCalculator(){
