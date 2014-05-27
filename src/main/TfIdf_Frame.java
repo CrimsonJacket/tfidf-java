@@ -147,6 +147,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fileViewerPanel = new javax.swing.JPanel();
         fileViewScrollPane = new javax.swing.JScrollPane();
         fileViewerTextArea = new javax.swing.JTextArea();
+        helpDialog = new javax.swing.JDialog();
+        helpPanel = new javax.swing.JPanel();
+        helpScrollPane = new javax.swing.JScrollPane();
+        helpTextArea = new javax.swing.JTextArea();
+        helpLabel = new javax.swing.JLabel();
         fullPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
         calculateBtn = new javax.swing.JButton();
@@ -163,7 +168,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         chooseOptions = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
-        aboutMenuItem = new javax.swing.JMenuItem();
 
         dirChooser.setDialogTitle("");
         dirChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
@@ -484,6 +488,52 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             .addComponent(fileViewerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        helpDialog.setTitle("Help - Contents");
+
+        helpPanel.setBackground(new java.awt.Color(254, 254, 254));
+
+        helpTextArea.setColumns(20);
+        helpTextArea.setRows(5);
+        helpTextArea.setText("      Enter the Settings Menu, to select Document \n      Directory and all other features.\n\n      Note:\n      Word Stemming will not only stem all words in \nthe Document, but also stem the term(s) you search\n      \n      Cosine Similarity Feature will utilize each term's TF-IDF \nValues as the Vectors required to calculate the Dot \nProduct and the Norms(required to calculate the Cosine\nSimilarity of 2 Documents)\n\n      Synonyms: are words with the same or similar \n                                meanings.\n\n      Hyponyms: are words or a phrase whose semantic \n                                 field is included within that of another \n                                 word.\n                                 For example, \"pigeon\", \"crow\", \"eagle\" \n                                 and \"seagull\" are all hyponyms of \"bird\".");
+        helpScrollPane.setViewportView(helpTextArea);
+
+        helpLabel.setText("Help ");
+
+        javax.swing.GroupLayout helpPanelLayout = new javax.swing.GroupLayout(helpPanel);
+        helpPanel.setLayout(helpPanelLayout);
+        helpPanelLayout.setHorizontalGroup(
+            helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(helpPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(helpScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                    .addGroup(helpPanelLayout.createSequentialGroup()
+                        .addGap(168, 168, 168)
+                        .addComponent(helpLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        helpPanelLayout.setVerticalGroup(
+            helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(helpPanelLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(helpLabel)
+                .addGap(18, 18, 18)
+                .addComponent(helpScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout helpDialogLayout = new javax.swing.GroupLayout(helpDialog.getContentPane());
+        helpDialog.getContentPane().setLayout(helpDialogLayout);
+        helpDialogLayout.setHorizontalGroup(
+            helpDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        helpDialogLayout.setVerticalGroup(
+            helpDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TF-IDF Java Program");
         setBackground(new java.awt.Color(254, 254, 254));
@@ -628,10 +678,12 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         helpMenu.setFont(new java.awt.Font("DejaVu Sans", 0, 15)); // NOI18N
 
         contentMenuItem.setText("Contents");
+        contentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                contentMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(contentMenuItem);
-
-        aboutMenuItem.setText("About");
-        helpMenu.add(aboutMenuItem);
 
         MenuBar.add(helpMenu);
 
@@ -906,6 +958,13 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fileViewerDialog.setVisible(true);
     }//GEN-LAST:event_viewFileButtonMouseClicked
 
+    private void contentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contentMenuItemActionPerformed
+        // TODO add your handling code here:
+        helpDialog.pack();
+        helpDialog.setLocationRelativeTo(TfIdf_Frame.this);
+        helpDialog.setVisible(true);
+    }//GEN-LAST:event_contentMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -945,7 +1004,6 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar MenuBar;
-    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JLabel additionalFeaturesLabel;
     private javax.swing.JButton calculateBtn;
     private javax.swing.JButton cancelSettingButton;
@@ -973,7 +1031,12 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JTextField filenameTextField;
     private javax.swing.JTextField folderPathText;
     private javax.swing.JPanel fullPanel;
+    private javax.swing.JDialog helpDialog;
+    private javax.swing.JLabel helpLabel;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JPanel helpPanel;
+    private javax.swing.JScrollPane helpScrollPane;
+    private javax.swing.JTextArea helpTextArea;
     private javax.swing.JCheckBox hypCheckBox;
     private javax.swing.JTextField locationTextField;
     public static javax.swing.JTextArea mainTextArea;
