@@ -59,7 +59,8 @@ public class SearchTermExpansion {
                     words = sb.toString().replaceAll("[\\W&&[^\\s]]\\w*", " ").split("\\W+");
                     TfIdf_Frame.appendMessage("    Processed Google Search Result " +(i + j + 1));
                 } catch (IOException e) {
-                    TfIdf_Frame.appendMessage("    Failed Processing Google result "+(i+j+1)+". Please check your internet connection or Please try again later.");
+                    TfIdf_Frame.appendMessage("    Failed to process Google result "+(i+j+1)+".");
+                    TfIdf_Frame.appendMessage("    Please check your internet connection or try again later.");
                     
                 }
             }
@@ -96,7 +97,6 @@ public class SearchTermExpansion {
                 break;
             }
         }
-        TfIdf_Frame.appendMessage("[+] Done: Search Expansion.");
         TfIdf_Frame.appendMessage("    Term(s) added: " +sb.toString());
         return sb.toString();       
     }

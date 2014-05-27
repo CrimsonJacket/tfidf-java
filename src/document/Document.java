@@ -80,10 +80,10 @@ public class Document {
         sb.append("\n");
         sb.append(initDivider());
         for (Map.Entry<String, Double> entry : tfidfVectors.entrySet()) {
-            sb.append(String.format("%-30s %10.6f %n", entry.getKey(), entry.getValue()));
+            sb.append(String.format("%-30s %10.8f %n", entry.getKey(), entry.getValue()));
         }
         sb.append(initDivider());
-        sb.append(String.format("Total: %23s %10.6f", " ",DocumentParser.tfidfMap.get(fileName)));
+        sb.append(String.format("Total: %23s %10.8f", " ",DocumentParser.tfidfMap.get(fileName)));
         return sb.toString();
     }
 
@@ -95,7 +95,7 @@ public class Document {
         sb.append("\n");
         sb.append(initDivider());
         for (Map.Entry<String, Double> entry : cosineMaps.entrySet()) {
-            sb.append(String.format("%-30s %10.6f %n", entry.getKey(), entry.getValue()));
+            sb.append(String.format("%-30s %10.8f %n", entry.getKey(), entry.getValue()));
         }
 
         return sb.toString();

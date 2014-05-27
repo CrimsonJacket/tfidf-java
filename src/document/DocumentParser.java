@@ -53,8 +53,8 @@ public class DocumentParser {
         DocumentParser.enableSynonym = syn;
         DocumentParser.enableHyponym = hyp;
         DocumentParser.filePath = filePath;
-        TfIdf_Frame.setSettingsMessage(String.format("%-20s%-5s","Folder Path: " , DocumentParser.filePath));
-        TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-5s","StopWord Path: " , StopWord.fileName));
+        TfIdf_Frame.setSettingsMessage(String.format("%-15s%-5s","Folder Path: " , DocumentParser.filePath));
+        TfIdf_Frame.appendSettingsMessage(String.format("%-15s%-5s","StopWord Path: " , StopWord.fileName));
         TfIdf_Frame.appendSettingsMessage("");
         TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s", "Cosine Similarity: ", enableCosine));
         TfIdf_Frame.appendSettingsMessage(String.format("%-20s%-10s","Stop Word: " , enableStopWord));
@@ -89,10 +89,11 @@ public class DocumentParser {
                     sb.append(" ");
                 }
             }
-            TfIdf_Frame.appendMessage("[+] Done: StopWords");
-        }
-        userInput = sb.toString();
+            TfIdf_Frame.appendMessage("[+] StopWords Initialized");
+            userInput = sb.toString();
+        }       
         sb = new StringBuilder();
+        sb.append(userInput).append(" ");
         String expansion;
         String syn;
         String hyp;
@@ -128,7 +129,6 @@ public class DocumentParser {
                 allTerms.add(t);
             }
         }
-
     }
 
     public void tfIdfCalculator() {
@@ -176,7 +176,7 @@ public class DocumentParser {
                 cosineMap.put(docToCompare.getValue().getFileName(), cosineSimilarity);
             }
             doc.getValue().setCosineMaps(cosineMap);
-            doc.getValue().cosineMaps = doc.getValue().sortMaps(cosineMap);
+            doc.getValue().cosineMaps = Document.sortMaps(cosineMap);
         }
         TfIdf_Frame.appendMessage("[+] Calculated Cosine Similarity Values");
     }

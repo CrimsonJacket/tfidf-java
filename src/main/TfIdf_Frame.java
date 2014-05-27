@@ -10,7 +10,11 @@ import document.DocumentParser;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -66,13 +70,17 @@ public class TfIdf_Frame extends javax.swing.JFrame {
             cosineCheckBox.setSelected(DocumentParser.enableCosine);
             stopWordCheckBox.setSelected(DocumentParser.enableStopWord);
             wordStemCheckBox.setSelected(DocumentParser.enableWordStem);
-            hypCheckBox.setSelected(DocumentParser.enableWordExpansion);
+            searchTermCheckBox.setSelected(DocumentParser.enableWordExpansion);
+            synCheckBox.setSelected(DocumentParser.enableSynonym);
+            hypCheckBox.setSelected(DocumentParser.enableHyponym);
         } else {
             folderPathText.setText("");
             stopWordPathText.setText("");
             cosineCheckBox.setSelected(false);
             stopWordCheckBox.setSelected(false);
             wordStemCheckBox.setSelected(false);
+            searchTermCheckBox.setSelected(false);
+            synCheckBox.setSelected(false);
             hypCheckBox.setSelected(false);
             dp = null;
             sw = null;
@@ -134,6 +142,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         cosineSimLabel = new javax.swing.JLabel();
         filenameTextField = new javax.swing.JTextField();
         locationTextField = new javax.swing.JTextField();
+        viewFileButton = new javax.swing.JButton();
+        fileViewerDialog = new javax.swing.JDialog();
+        fileViewerPanel = new javax.swing.JPanel();
+        fileViewScrollPane = new javax.swing.JScrollPane();
+        fileViewerTextArea = new javax.swing.JTextArea();
         fullPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
         calculateBtn = new javax.swing.JButton();
@@ -346,9 +359,19 @@ public class TfIdf_Frame extends javax.swing.JFrame {
 
         cosineSimLabel.setText("Cosine Similarity Values");
 
+        filenameTextField.setEditable(false);
         filenameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 filenameTextFieldActionPerformed(evt);
+            }
+        });
+
+        locationTextField.setEditable(false);
+
+        viewFileButton.setText(" View ");
+        viewFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                viewFileButtonMouseClicked(evt);
             }
         });
 
@@ -380,7 +403,9 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(filenameTextField)
                     .addComponent(locationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(139, 139, 139))
+                .addGap(16, 16, 16)
+                .addComponent(viewFileButton)
+                .addGap(57, 57, 57))
         );
         fileInfoPanelLayout.setVerticalGroup(
             fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -394,7 +419,8 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fileLocationLabel)
-                    .addComponent(locationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(locationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(viewFileButton))
                 .addGap(10, 10, 10)
                 .addGroup(fileInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cosineSimLabel)
@@ -417,6 +443,45 @@ public class TfIdf_Frame extends javax.swing.JFrame {
         fileInfoDialogLayout.setVerticalGroup(
             fileInfoDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(fileInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        fileViewerDialog.setTitle("File Document Viewer - ");
+
+        fileViewerPanel.setBackground(java.awt.Color.white);
+
+        fileViewerTextArea.setEditable(false);
+        fileViewerTextArea.setBackground(new java.awt.Color(254, 254, 254));
+        fileViewerTextArea.setColumns(20);
+        fileViewerTextArea.setLineWrap(true);
+        fileViewerTextArea.setRows(5);
+        fileViewScrollPane.setViewportView(fileViewerTextArea);
+
+        javax.swing.GroupLayout fileViewerPanelLayout = new javax.swing.GroupLayout(fileViewerPanel);
+        fileViewerPanel.setLayout(fileViewerPanelLayout);
+        fileViewerPanelLayout.setHorizontalGroup(
+            fileViewerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fileViewerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fileViewScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        fileViewerPanelLayout.setVerticalGroup(
+            fileViewerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fileViewerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fileViewScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout fileViewerDialogLayout = new javax.swing.GroupLayout(fileViewerDialog.getContentPane());
+        fileViewerDialog.getContentPane().setLayout(fileViewerDialogLayout);
+        fileViewerDialogLayout.setHorizontalGroup(
+            fileViewerDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileViewerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        fileViewerDialogLayout.setVerticalGroup(
+            fileViewerDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileViewerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -647,10 +712,27 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                                     JOptionPane.ERROR_MESSAGE);
                             DocumentParser.setEnableStopWord(false);
                             stopWordCheckBox.setSelected(false);
+                            sw = null;
+                        }
+                    }else if(!DocumentParser.enableStopWord && sw!=null){
+                        try {
+                            dp = new DocumentParser(cosineCheckBox.isSelected(),
+                                    stopWordCheckBox.isSelected(),
+                                    wordStemCheckBox.isSelected(),
+                                    searchTermCheckBox.isSelected(),
+                                    synCheckBox.isSelected(),
+                                    hypCheckBox.isSelected(),
+                                    folderPathText.getText());
+                            dp.parseFiles();
+                        } catch (IOException iOException) {
+                            JOptionPane.showMessageDialog(null,
+                                "Invalid Settings. Please redo settings",
+                                "Settings Error",
+                                JOptionPane.ERROR_MESSAGE);
                         }
                     }
-                    setSettingsMessage(String.format("%-20s%-5s", "Folder Path: ", DocumentParser.filePath));
-                    appendSettingsMessage(String.format("%-20s%-5s", "StopWord Path: ", StopWord.fileName));
+                    setSettingsMessage(String.format("%-15s%-5s", "Folder Path: ", DocumentParser.filePath));
+                    appendSettingsMessage(String.format("%-15s%-5s", "StopWord Path: ", StopWord.fileName));
                     appendSettingsMessage("");
                     appendSettingsMessage(String.format("%-20s%-10s", "Cosine Similarity: ", DocumentParser.enableCosine));
                     appendSettingsMessage(String.format("%-20s%-10s", "Stop Word: ", DocumentParser.enableStopWord));
@@ -690,7 +772,9 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                                 "Invalid Settings. Please Try Again",
                                 "Settings Error",
                                 JOptionPane.ERROR_MESSAGE);
-                        resetSettings();
+                        dp = null;
+                        sw = null;
+                        //resetSettings();
                     }
                 }
             }
@@ -725,9 +809,11 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_chooseStopWordButtonMouseClicked
 
     private void calculateBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calculateBtnMouseClicked
-        if (!searchTextField.getText().trim().equals("") && !searchTextField.getText().equalsIgnoreCase("[ Enter Search Term(s) ]")) {           
-            mainTextArea.setText("[+] Initializing Calculation Sequence.");
-            
+        if (!searchTextField.getText().trim().equals("") && !searchTextField.getText().equalsIgnoreCase("[ Enter Search Term(s) ]")) {                       
+            mainTextArea.setSelectionStart(0);
+            mainTextArea.setSelectionEnd(0);
+            textAreaScrollPane.getViewport().setViewPosition(new java.awt.Point(0, 0));            
+            setMessage("[+] Initializing Calculation Sequence.");
             try {
                 topList.removeAll();
                  mainTextArea.setCaretPosition(0);
@@ -791,12 +877,34 @@ public class TfIdf_Frame extends javax.swing.JFrame {
                 JOptionPane.QUESTION_MESSAGE);
         if (option == JOptionPane.YES_OPTION) {
             resetSettings();
+            settingsDialog.dispose();
         }
     }//GEN-LAST:event_cancelSettingButtonMouseClicked
 
     private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filenameTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_filenameTextFieldActionPerformed
+
+    private void viewFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_viewFileButtonMouseClicked
+        // TODO add your handling code here:
+        String fileLocation = locationTextField.getText();
+        fileViewerDialog.setTitle(fileViewerDialog.getTitle()+filenameTextField.getText());
+        fileViewerDialog.pack();
+        fileViewerDialog.setLocationRelativeTo(TfIdf_Frame.this);
+        //
+        try {            
+            Scanner scanner = new Scanner(new File(fileLocation));
+            fileViewerTextArea.setText("");
+            while(scanner.hasNextLine()){
+                String s = scanner.nextLine();
+                fileViewerTextArea.append(s);
+                fileViewerTextArea.append("\n");
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TfIdf_Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        fileViewerDialog.setVisible(true);
+    }//GEN-LAST:event_viewFileButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -857,6 +965,10 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JPanel fileInfoPanel;
     private javax.swing.JLabel fileLocationLabel;
     private javax.swing.JLabel fileTitleLabel;
+    private javax.swing.JScrollPane fileViewScrollPane;
+    private javax.swing.JDialog fileViewerDialog;
+    private javax.swing.JPanel fileViewerPanel;
+    private javax.swing.JTextArea fileViewerTextArea;
     private javax.swing.JLabel filenameLabel;
     private javax.swing.JTextField filenameTextField;
     private javax.swing.JTextField folderPathText;
@@ -885,6 +997,7 @@ public class TfIdf_Frame extends javax.swing.JFrame {
     private javax.swing.JLabel top10Label1;
     private javax.swing.JList topList;
     private javax.swing.JScrollPane topListScrollPane;
+    private javax.swing.JButton viewFileButton;
     private javax.swing.JCheckBox wordStemCheckBox;
     // End of variables declaration//GEN-END:variables
 }

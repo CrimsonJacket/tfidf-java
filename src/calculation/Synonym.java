@@ -13,8 +13,6 @@ import rita.wordnet.*;
 
 public class Synonym {
 
-    private static int numOfSearch = 3;
-
     public static String getSynonym(String userInput) {
         TfIdf_Frame.appendMessage("[+] Started Synonym Sequence");
         StringBuilder sb = new StringBuilder();
@@ -32,7 +30,6 @@ public class Synonym {
                 }
             }
         }
-        TfIdf_Frame.appendMessage("[+] Done: Synonym.");
         TfIdf_Frame.appendMessage("    Term(s) added: " + termsAdded.toString());
         return sb.toString();
     }
@@ -43,17 +40,17 @@ public class Synonym {
         RiWordnet wordnet = new RiWordnet(null);
         StringBuilder termsAdded = new StringBuilder();
         String[] tmpTerms = userInput.replaceAll("[\\W&&[^\\s]]", " ").split("\\W+");
-        TfIdf_Frame.appendMessage("    Concatenating new Terms.");
+        TfIdf_Frame.appendMessage("    Concatenating new Terms.");       
         for (String tmp : tmpTerms) {
             String[] hyponym = wordnet.getHyponyms(tmp, "n");
             if (hyponym != null) {
                 for (String syn : hyponym) {
+                    System.out.println("\t"+syn);
                     termsAdded.append(syn).append(" ");
                     sb.append(syn).append(" ");
                 }               
             }
         }
-        TfIdf_Frame.appendMessage("[+] Done: Hyponym.");
         TfIdf_Frame.appendMessage("    Term(s) added: " + termsAdded.toString());
         return sb.toString();
     }
