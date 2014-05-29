@@ -45,7 +45,6 @@ public class Synonym {
             String[] hyponym = wordnet.getHyponyms(tmp, "n");
             if (hyponym != null) {
                 for (String syn : hyponym) {
-                    System.out.println("\t"+syn);
                     termsAdded.append(syn).append(" ");
                     sb.append(syn).append(" ");
                 }               

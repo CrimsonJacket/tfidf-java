@@ -110,7 +110,8 @@ public class DocumentParser {
             hyp = Synonym.getHyponym(userInput);
             sb.append(hyp).append(" ");
         }
-        userInput = sb.toString();
+        userInput = sb.toString().toLowerCase();
+        sb = new StringBuilder();
         String[] terms = userInput.replaceAll("[\\W&&[^\\s]]", "").split("\\W+");
         for (String t : terms) {
             //Stop Words
@@ -127,8 +128,10 @@ public class DocumentParser {
             //adds the term into the final Term(s) List
             if (!allTerms.contains(t)) {
                 allTerms.add(t);
+                sb.append(t).append(" ");
             }
         }
+        TfIdf_Frame.appendMessage("Final Search Term(s): "+sb.toString());
     }
 
     public void tfIdfCalculator() {
